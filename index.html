@@ -258,6 +258,101 @@ body {
   box-shadow: 0 24px 70px rgba(0,0,0,0.55), inset 0 1.5px 0 rgba(255,255,255,0.10) !important;
 }
 
+/* ======= USER LOGIN — Diagonal Split Card (new design) ======= */
+#userPage {
+  background: #0a2422 !important;
+  padding: 0 26px !important;
+}
+#userPage::before, #userPage::after { display: none !important; }
+.ul-split {
+  content: ''; position: absolute; inset: 0;
+  background: #123c3a;
+  clip-path: polygon(28% 0, 100% 0, 100% 62%);
+  z-index: 0; pointer-events: none;
+}
+.ul-wrap {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 360px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.ul-crown {
+  font-size: 54px; margin-bottom: 4px;
+  animation: splashPulse 2s ease-in-out infinite alternate;
+}
+.ul-title {
+  text-align: center; margin-bottom: 32px; line-height: 1.35;
+}
+.ul-title b {
+  display: block; font-size: 23px; font-weight: 900;
+  color: #fff; letter-spacing: 0.3px;
+}
+.ul-title span {
+  display: block; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.45); letter-spacing: 2px; margin-top: 3px;
+}
+.ul-avatar {
+  width: 62px; height: 62px; border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+  border: 2px solid rgba(255,255,255,0.28);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; cursor: pointer; margin-bottom: 22px;
+  overflow: hidden; position: relative;
+}
+.ul-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ul-avatar input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.ul-field {
+  position: relative; width: 100%; height: 56px;
+  border-radius: 30px; background: rgba(255,255,255,0.14);
+  margin-top: 16px; display: flex; align-items: center;
+  direction: ltr;
+}
+.ul-icon {
+  position: absolute; left: -3px; top: 50%; transform: translateY(-50%);
+  width: 52px; height: 52px; border-radius: 50%; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3); flex-shrink: 0;
+}
+.ul-field.pass .ul-icon { left: auto; right: -3px; }
+.ul-icon svg { width: 21px; height: 21px; stroke: #0c2b29; }
+#userPage .ul-field input {
+  width: 100%; height: 100%; margin: 0 !important;
+  padding: 0 66px 0 22px !important;
+  background: transparent !important; border: none !important;
+  color: #fff; font-size: 14.5px; font-family: 'Inter', sans-serif;
+  direction: ltr; text-align: left;
+}
+.ul-field.pass input { padding: 0 22px 0 66px !important; }
+.ul-field.plain input { padding: 0 22px !important; direction: rtl; text-align: right; }
+#userPage .ul-field input::placeholder { color: rgba(255,255,255,0.55); }
+#userPage .ul-field input:focus { background: rgba(255,255,255,0.05) !important; }
+.ul-btn {
+  width: 100%; margin-top: 26px; padding: 16px; border: none;
+  border-radius: 30px; background: #fff; color: #0a2020;
+  font-weight: 900; font-size: 15px; letter-spacing: 0.3px;
+  cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  font-family: 'Inter', sans-serif; transition: transform 0.15s;
+}
+.ul-btn:active { transform: scale(0.97); }
+.ul-btn.ghost {
+  background: rgba(255,255,255,0.14); color: #fff;
+  box-shadow: none; border: 1px solid rgba(255,255,255,0.2);
+}
+.ul-link {
+  margin-top: 16px; background: none; border: none;
+  color: rgba(255,255,255,0.55); font-size: 12.5px;
+  cursor: pointer; text-decoration: underline;
+  font-family: 'Inter', sans-serif;
+}
+.ul-recover { display: none; margin-top: 14px; width: 100%; }
+.ul-recover-hint {
+  font-size: 11.5px; color: rgba(255,255,255,0.5);
+  margin-bottom: 8px; text-align: center;
+}
+.ul-msg {
+  color: rgba(255,255,255,0.4); font-size: 11.5px;
+  margin-top: 18px; text-align: center;
+}
+
 /* ======= HEADER ======= */
 header {
   position: sticky; top: 0; z-index: 100;
@@ -2732,19 +2827,7 @@ body {
   position: fixed !important;
 }
 .bottom-nav::before {
-  content: '';
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 12px) - 2px);
-  left: 12px; right: 12px;
-  top: 6px;
-  background: rgba(15,20,35,0.82);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 36px;
-  pointer-events: none;
-  z-index: 0;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07);
+  display: none !important;
 }
 .nav-item {
   position: relative; z-index: 1;
@@ -2771,6 +2854,66 @@ body {
   border-radius: 14px !important;
   transition: all 0.22s cubic-bezier(.34,1.56,.64,1) !important;
 }
+
+/* ======= EXPANDABLE TAB BAR (tap to expand/collapse — like the video) ======= */
+.nav-pill {
+  position: relative;
+  display: flex; align-items: center;
+  gap: 2px;
+  max-width: 420px;
+  background: rgba(15,20,35,0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 36px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07);
+  padding: 4px;
+  transition: max-width 0.4s cubic-bezier(.4,0,.2,1), border-radius 0.4s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.bottom-nav.collapsed .nav-pill {
+  max-width: 118px;
+  border-radius: 30px;
+}
+.bottom-nav:not(.collapsed) .nav-pill {
+  max-width: 420px;
+}
+/* toggle button — only shown while collapsed */
+.nav-toggle {
+  display: none;
+  align-items: center; gap: 8px;
+  background: none; border: none; cursor: pointer;
+  color: white; padding: 6px 14px 6px 8px;
+  font-size: 12px; font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+.bottom-nav.collapsed .nav-toggle { display: flex; }
+.nav-toggle .nav-icon {
+  width: 30px; height: 30px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--green); border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0,232,122,0.45);
+}
+.nav-toggle .nav-icon svg { width: 16px; height: 16px; stroke: #000; stroke-width: 2.5; }
+/* row of real nav items — only shown while expanded */
+.nav-items-row {
+  display: none;
+  align-items: center; gap: 2px;
+  width: 100%;
+}
+.bottom-nav:not(.collapsed) .nav-items-row { display: flex; }
+.nav-items-row .nav-item { flex: 1; }
+.nav-close {
+  flex-shrink: 0;
+  width: 34px; height: 34px; margin-inline-start: 2px;
+  border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.75);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: background 0.2s;
+}
+.nav-close:active { background: rgba(255,255,255,0.18); }
 
 /* --- HEADER: glass pill style --- */
 header {
@@ -3270,6 +3413,7 @@ textarea:focus, select:focus {
   background: linear-gradient(135deg, rgba(255,214,10,0.09), rgba(255,107,53,0.06)) !important;
   border-color: rgba(255,214,10,0.22) !important;
 }
+@keyframes he-spin { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 
 </style>
 </head>
@@ -3290,7 +3434,7 @@ textarea:focus, select:focus {
   <div class="splash-card">
     <div class="splash-logo-wrap">⚽</div>
     <h1>7TH LEGA<br>OMEGA EMPEROR</h1>
-    <p>SEASON 2025 • ONLINE</p>
+    <p>SEASON 2026 • ONLINE</p>
 
     <div class="splash-progress-label">
       <span id="splashLoadingLabel">جاري التحميل...</span>
@@ -3303,25 +3447,39 @@ textarea:focus, select:focus {
 </div>
 
 <!-- USERNAME PAGE -->
-<div id="userPage" style="display:none;flex-direction:column;padding:60px 24px 40px;align-items:center;justify-content:center;min-height:100vh;">
-  <div style="font-size:70px;text-align:center;margin-bottom:16px;animation:splashPulse 2s ease-in-out infinite alternate;">👑</div>
-  <h2 style="font-size:26px;font-weight:900;background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:28px;"><span id="loginWelcomeText">مرحباً في</span><br>OMEGA EMPEROR</h2>
-  <div class="card login-glass-card" style="width:100%;max-width:360px;margin-top:0;padding:28px 22px;">
-    <div class="avatar-upload" id="avatarPreview" onclick="document.getElementById('avatarFile').click()">
+<div id="userPage" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;position:fixed;inset:0;">
+  <div class="ul-split"></div>
+  <div class="ul-wrap">
+    <div class="ul-crown">👑</div>
+    <div class="ul-title"><b id="loginWelcomeText">مرحباً في</b><span>OMEGA EMPEROR</span></div>
+
+    <div class="ul-avatar" id="avatarPreview" onclick="document.getElementById('avatarFile').click()">
       📷
       <input type="file" id="avatarFile" accept="image/*" onchange="previewAvatar(this)">
     </div>
-    <input id="usernameInput" placeholder="اسم اللاعب">
-    <input id="userPassInput" type="password" placeholder="كلمة المرور">
-    <button id="loginEnterBtn" class="btn btn-primary" onclick="saveUser()" style="margin-top:14px;">دخول ⚡</button>
-    <button id="loginForgotBtn" class="btn btn-ghost" onclick="document.getElementById('recoverSection').style.display=document.getElementById('recoverSection').style.display==='none'?'block':'none'" style="margin-top:8px;font-size:13px;">🔑 نسيت البسورد؟</button>
-    <div id="recoverSection" style="display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;">
-      <div id="loginRecoverHint" style="font-size:12px;color:var(--text2);margin-bottom:8px;">أدخل اسم المستخدم لعرض بيانات الاستعادة</div>
-      <input id="recoverName" placeholder="اسم المستخدم">
-      <button id="loginRecoverBtn" class="btn btn-ghost" onclick="showRecoverPass()" style="margin-top:8px;">🔍 عرض معلومات الاستعادة</button>
+
+    <div class="ul-field">
+      <div class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <input id="usernameInput" placeholder="اسم اللاعب">
+    </div>
+    <div class="ul-field pass">
+      <input id="userPassInput" type="password" placeholder="كلمة المرور">
+      <div class="ul-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    </div>
+
+    <button id="loginEnterBtn" class="ul-btn" onclick="saveUser()">دخول ⚡</button>
+    <button id="loginForgotBtn" class="ul-link" onclick="document.getElementById('recoverSection').style.display=document.getElementById('recoverSection').style.display==='none'?'block':'none'">🔑 نسيت البسورد؟</button>
+
+    <div id="recoverSection" class="ul-recover">
+      <div id="loginRecoverHint" class="ul-recover-hint">أدخل اسم المستخدم لعرض بيانات الاستعادة</div>
+      <div class="ul-field plain">
+        <input id="recoverName" placeholder="اسم المستخدم">
+      </div>
+      <button id="loginRecoverBtn" class="ul-btn ghost" style="margin-top:10px;" onclick="showRecoverPass()">🔍 عرض معلومات الاستعادة</button>
       <div id="recoverResult"></div>
     </div>
-    <div id="userPageMsg" style="color:var(--text2);font-size:12px;margin-top:10px;text-align:center;">إذا لم يكن لديك حساب سيتم إنشاؤه تلقائياً</div>
+
+    <div id="userPageMsg" class="ul-msg">إذا لم يكن لديك حساب سيتم إنشاؤه تلقائياً</div>
   </div>
 </div>
 
@@ -3335,6 +3493,7 @@ textarea:focus, select:focus {
       <div class="gem-display" onclick="openGemShop()" id="headerGems" style="display:none;">
         <span class="gem-icon">💎</span><span id="headerGemCount">0</span>
       </div>
+      <div class="header-icon-btn" id="refreshBtn" onclick="manualRefresh()" title="تحديث"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg></div>
       <div class="header-icon-btn" onclick="openProfileSettings()" title="إعدادات البروفايل"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.65 1.65 0 0 0 8.92 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></div>
       <div class="header-avatar" id="headerAvatar" onclick="showProfile(currentUser)" style="position:relative;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
     </div>
@@ -3346,22 +3505,31 @@ textarea:focus, select:focus {
   <button class="ai-fab" onclick="openAiPanel()" title="المساعد الذكي"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M5.6 18.4l2.1-2.1"/><path d="M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></button>
 
   <!-- BOTTOM NAV -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" onclick="showPage('home',this)">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg></div><span id="navLabelHome">Home</span>
-    </button>
-    <button class="nav-item" onclick="showPage('players',this)">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M19 3.13a4 4 0 0 1 0 7.75"/></svg></div><span id="navLabelPlayers">Players</span>
-    </button>
-    <button class="nav-item" onclick="showPage('matches',this)">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M7 5H3v2a3 3 0 0 0 3 3"/><path d="M17 5h4v2a3 3 0 0 1-3 3"/></svg></div><span id="navLabelMatches">Matches</span>
-    </button>
-    <button class="nav-item" onclick="showPage('chat',this)">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg></div><span id="navLabelChat">Chat</span>
-    </button>
-    <button class="nav-item" onclick="showPage('more',this)">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div><span id="navLabelMore">More</span>
-    </button>
+  <nav class="bottom-nav collapsed" id="bottomNav">
+    <div class="nav-pill">
+      <button class="nav-toggle" id="navToggle" onclick="document.getElementById('bottomNav').classList.remove('collapsed')">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg></div>
+        <span id="navToggleLabel">Home</span>
+      </button>
+      <div class="nav-items-row">
+        <button class="nav-item active" onclick="showPage('home',this); syncNavToggle(this)">
+          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg></div><span id="navLabelHome">Home</span>
+        </button>
+        <button class="nav-item" onclick="showPage('players',this); syncNavToggle(this)">
+          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M19 3.13a4 4 0 0 1 0 7.75"/></svg></div><span id="navLabelPlayers">Players</span>
+        </button>
+        <button class="nav-item" onclick="showPage('matches',this); syncNavToggle(this)">
+          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M7 5H3v2a3 3 0 0 0 3 3"/><path d="M17 5h4v2a3 3 0 0 1-3 3"/></svg></div><span id="navLabelMatches">Matches</span>
+        </button>
+        <button class="nav-item" onclick="showPage('chat',this); syncNavToggle(this)">
+          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg></div><span id="navLabelChat">Chat</span>
+        </button>
+        <button class="nav-item" onclick="showPage('more',this); syncNavToggle(this)">
+          <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div><span id="navLabelMore">More</span>
+        </button>
+        <button class="nav-close" onclick="document.getElementById('bottomNav').classList.add('collapsed')">✕</button>
+      </div>
+    </div>
   </nav>
 </div>
 
@@ -3389,6 +3557,11 @@ textarea:focus, select:focus {
     <button onclick="closeLiveEmbed()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:30px;height:30px;border-radius:8px;font-size:16px;cursor:pointer;">✕</button>
   </div>
   <iframe id="liveEmbedFrame" src="about:blank" style="flex:1;width:100%;border:none;background:#05070c;" allow="fullscreen"></iframe>
+</div>
+
+<!-- HOME LIVE EMBED MODAL -->
+<div class="modal-overlay" id="homeEmbedModal">
+  <div class="modal-box" id="homeEmbedModalBody" style="max-width:400px;max-height:90vh;overflow-y:auto;"></div>
 </div>
 
 <!-- FIREBASE SETUP MODAL -->
@@ -3656,7 +3829,7 @@ let users=[], playerRequests=[], codes=[], notifications=[];
 let voteAward={title:'', nominees:[]}; // {title, nominees:[{id,name,img,votes:[usernames]}]}
 let appSettings = { bg:'', bgType:'color', anthem:'', anthemName:'', privateMembers:false };
 let bulletin     = { mediaType:'', mediaSrc:'', caption:'', time:'', active:false };
-let homeEmbed    = { url:'', boxW:340, boxH:220, iframeW:400, iframeH:700, offsetX:0, offsetY:0, active:false };
+let homeEmbed    = { url:'', iframeW:380, iframeH:900, selX:0, selY:0, selW:380, selH:200, active:false };
 let streams      = []; // MOD FREE WORLD CUP streams
 let tiktoks      = []; // TikTok links
 let m3uChannels  = []; // M3U / IPTV channels
@@ -3676,7 +3849,7 @@ const DEFAULT_THEMES = {
       id:'normal', name:'الوضع العادي', removable:false,
       icon:'⚡', logoImage:'',
       headerTitle:'OMEGA EMPEROR',
-      heroBadge:'⭐ SEASON 2025',
+      heroBadge:'⭐ SEASON 2026',
       heroTitle:'7TH LEGA OMEGA EMPEROR',
       colors:{ green:'#00e87a', blue:'#00b8ff', purple:'#8b5cf6', orange:'#ff6b35', red:'#ff3b55', gold:'#ffd60a', bg:'#05080f', bg2:'#0a0e1a' },
       background:{ type:'default', value:'' },
@@ -4195,6 +4368,10 @@ function setupListeners() {
   });
   fbLoad('appSettings', v=>{ if(v&&!Array.isArray(v)){ appSettings=v; applyAppSettings(); } });
   fbLoad('homeEmbed', v=>{ if(v&&!Array.isArray(v)){ homeEmbed=v; if(currentPage==='home') homePage(); } });
+  get(ref(db,'homeEmbed')).then(snap=>{
+    const val=snap.val();
+    if(val && typeof val==='object' && !Array.isArray(val)){ homeEmbed=val; if(currentPage==='home') homePage(); }
+  }).catch(e=>console.error('homeEmbed initial fetch failed',e));
   onValue(ref(db,'siteThemes'), snap=>{
     const val=snap.val();
     if(val&&typeof val==='object'&&val.modes){
@@ -4238,32 +4415,63 @@ window.onload = () => {
     isAdmin=true;
     document.getElementById('adminBadge').style.display='flex';
   }
-  setTimeout(()=>{
-    document.getElementById('splash').style.opacity='0';
-    setTimeout(()=>{
-      document.getElementById('splash').style.display='none';
-      if(!currentUser) document.getElementById('userPage').style.display='flex';
-      else startApp();
-    },500);
-  },2500);
-
-  // Animate percentage counter on splash
-  (function(){
-    const pctEl=document.getElementById('splashPct');
-    if(!pctEl) return;
-    let pct=0;
-    const dur=2400;
-    const start=performance.now();
-    function tick(now){
-      const t=Math.min((now-start)/dur,1);
-      const ease=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-      pct=Math.round(ease*100);
-      pctEl.textContent=pct+'%';
-      if(t<1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  })();
+  runRealSplashLoad();
 };
+
+// العد المئوي دابا حقيقي: كيبقى معلق حتى توصل البيانات فعلياً من Firebase
+function runRealSplashLoad(){
+  const pctEl=document.getElementById('splashPct');
+  const fillEl=document.getElementById('splashFill');
+  const keys=['players','teams','matches','videos','stories','live','users','appSettings','homeEmbed','bulletin','sections'];
+  const total=keys.length;
+  let done=0;
+  let finished=false;
+  function updatePct(){
+    const pct=Math.min(100,Math.round((done/total)*100));
+    if(pctEl) pctEl.textContent=pct+'%';
+    if(fillEl) fillEl.style.width=pct+'%';
+  }
+  updatePct();
+  function finishLoad(){
+    if(finished) return;
+    finished=true;
+    if(pctEl) pctEl.textContent='100%';
+    if(fillEl) fillEl.style.width='100%';
+    setTimeout(()=>{
+      document.getElementById('splash').style.opacity='0';
+      setTimeout(()=>{
+        document.getElementById('splash').style.display='none';
+        if(!currentUser) document.getElementById('userPage').style.display='flex';
+        else startApp();
+      },500);
+    },250);
+  }
+  // شبكة أمان: إيلا الاتصال بطيء بزاف أو خربان، منمنعوش المستخدم يبقى عالق للأبد
+  const safetyTimeout=setTimeout(()=>{ finishLoad(); },10000);
+  keys.forEach(k=>{
+    get(ref(db,k)).then(snap=>{
+      const val=snap.val();
+      const asArray = val ? (Array.isArray(val)?val:Object.values(val)) : [];
+      switch(k){
+        case 'players': players=asArray; break;
+        case 'teams': teams=asArray; break;
+        case 'matches': matches=asArray; break;
+        case 'videos': videos=asArray; break;
+        case 'stories': stories=asArray; break;
+        case 'live': live=asArray; break;
+        case 'users': users=asArray; break;
+        case 'sections': sections=asArray; break;
+        case 'appSettings': if(val&&typeof val==='object'&&!Array.isArray(val)) appSettings=val; break;
+        case 'homeEmbed': if(val&&typeof val==='object'&&!Array.isArray(val)) homeEmbed=val; break;
+        case 'bulletin': if(val&&typeof val==='object'&&!Array.isArray(val)) bulletin=val; break;
+      }
+    }).catch(e=>{ console.error('فشل تحميل '+k, e); })
+    .finally(()=>{
+      done++; updatePct();
+      if(done>=total){ clearTimeout(safetyTimeout); finishLoad(); }
+    });
+  });
+}
 
 function startApp() {
   document.getElementById('userPage').style.display='none';
@@ -4357,6 +4565,14 @@ function logout(){
 // ===========================
 // SHOW PAGE
 // ===========================
+// زر الرفريش فوق — كيعاود يجيب كل البيانات مباشرة من Firebase بلا ما يخلي كاش قديم
+function manualRefresh(){
+  const btn=document.getElementById('refreshBtn');
+  if(btn) btn.querySelector('svg').style.animation='he-spin 0.6s linear infinite';
+  toast('🔄 جاري التحديث...');
+  setTimeout(()=>{ location.reload(); }, 250);
+}
+window.manualRefresh=manualRefresh;
 function showPage(page, btn){
   currentPage=page;
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
@@ -4405,7 +4621,7 @@ function homePage(){
   document.getElementById('app').innerHTML=`
   <div class="page-anim">
     <div class="hero">
-      <div class="hero-badge">${activeMode.heroBadge||'⭐ SEASON 2025'}</div>
+      <div class="hero-badge">${activeMode.heroBadge||'⭐ SEASON 2026'}</div>
       <h2>${activeMode.heroTitle||'7TH LEGA OMEGA EMPEROR'}</h2>
       <p>${t('home_welcome')} ${currentUser} 🔥</p>
     </div>
@@ -4418,11 +4634,11 @@ function homePage(){
     ${homeEmbed.active && homeEmbed.url ? `
     <div class="card" style="border-color:rgba(255,40,40,0.3);padding-bottom:12px;">
       <div class="section-title" style="justify-content:space-between;">
-        <span><span class="live-dot"></span>LIVE</span>
-        ${isAdmin?`<button onclick="openHomeEmbedModal()" style="background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.25);color:var(--green);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer;">⚙️ تعديل العرض</button>`:''}
+        <span><span class="live-dot"></span>LIVE ${isAdmin?`<button onclick="quickEditHeSize()" title="عدل الحجم بالأرقام" style="background:none;border:none;font-size:14px;cursor:pointer;vertical-align:middle;">📐</button>`:''}</span>
+        ${isAdmin?`<button onclick="openHomeEmbedModal()" style="background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.25);color:var(--green);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer;">✂️ تعديل القص</button>`:''}
       </div>
-      <div style="width:100%;max-width:${homeEmbed.boxW}px;height:${homeEmbed.boxH}px;overflow:hidden;position:relative;border-radius:12px;border:1px solid rgba(255,255,255,0.1);margin:8px auto 0;background:#05070c;">
-        <iframe src="${homeEmbed.url}" style="position:absolute;top:-${homeEmbed.offsetY}px;left:-${homeEmbed.offsetX}px;width:${homeEmbed.iframeW}px;height:${homeEmbed.iframeH}px;border:none;pointer-events:none;" scrolling="no"></iframe>
+      <div id="heViewOuter" style="width:100%;height:${homeEmbed.selH}px;overflow:hidden;position:relative;border-radius:12px;border:1px solid rgba(255,255,255,0.1);margin:8px auto 0;background:#05070c;">
+        <iframe id="heViewFrame" src="${homeEmbed.url}" style="position:absolute;top:-${homeEmbed.selY}px;left:-${homeEmbed.selX}px;width:${homeEmbed.iframeW}px;height:${homeEmbed.iframeH}px;border:none;pointer-events:none;transform-origin:top left;" scrolling="no" data-selx="${homeEmbed.selX}" data-sely="${homeEmbed.selY}" data-selw="${homeEmbed.selW}" data-selh="${homeEmbed.selH}" data-ifw="${homeEmbed.iframeW}" data-ifh="${homeEmbed.iframeH}"></iframe>
       </div>
     </div>`: (isAdmin?`
     <div class="card" style="border-color:rgba(255,255,255,0.08);text-align:center;">
@@ -4543,74 +4759,184 @@ function homePage(){
       ${stories.slice(-2).reverse().map(s=>`<div class="story-card">${s.text}</div>`).join('')}
     </div>`:''}
   </div>`;
+  if(homeEmbed.active && homeEmbed.url) requestAnimationFrame(applyHomeEmbedScale);
 }
 // ===========================
-// HOME LIVE EMBED WIDGET (منجر كيتحكم فالحجم والقص، المستخدم كيشوف بس)
+// HOME LIVE EMBED WIDGET — أداة قص حقيقية (مربع بزوايا كتسحبها، كيفما قص الصور)
+// المنجر كيحدد المربع، والمستخدم كيشوف غير جوه المربع
 // ===========================
+let heState={iframeW:380,iframeH:900,selX:0,selY:0,selW:380,selH:200,url:''};
+let heHandlersBound=false;
+let heEditZoom=1;
 function homeEmbedFormHTML(){
-  const e=homeEmbed;
+  const e=heState;
   return `
-    <div class="section-title" style="margin-bottom:12px;">⚙️ إعداد العرض المباشر</div>
-    <input id="heUrl" placeholder="رابط التضمين (embed URL)" value="${e.url||''}">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-      <div><div style="font-size:11px;color:var(--text2);margin-bottom:4px;">عرض الصندوق (px)</div><input id="heBoxW" type="number" value="${e.boxW}" oninput="updateHomeEmbedPreview()"></div>
-      <div><div style="font-size:11px;color:var(--text2);margin-bottom:4px;">ارتفاع الصندوق (px)</div><input id="heBoxH" type="number" value="${e.boxH}" oninput="updateHomeEmbedPreview()"></div>
-      <div><div style="font-size:11px;color:var(--text2);margin-bottom:4px;">عرض الإطار الكامل (px)</div><input id="heIfW" type="number" value="${e.iframeW}" oninput="updateHomeEmbedPreview()"></div>
-      <div><div style="font-size:11px;color:var(--text2);margin-bottom:4px;">ارتفاع الإطار الكامل (px)</div><input id="heIfH" type="number" value="${e.iframeH}" oninput="updateHomeEmbedPreview()"></div>
-      <div><div style="font-size:11px;color:var(--text2);margin-bottom:4px;">إزاحة أفقية (قص X)</div><input id="heOffX" type="number" value="${e.offsetX}" oninput="updateHomeEmbedPreview()"></div>
-      <div><div style="font-size:11px;color:var(--text2);margin-bottom:4px;">إزاحة عمودية (قص Y)</div><input id="heOffY" type="number" value="${e.offsetY}" oninput="updateHomeEmbedPreview()"></div>
+    <div class="section-title" style="margin-bottom:10px;">✂️ قص العرض المباشر</div>
+    <input id="heUrl" placeholder="رابط التضمين (embed URL)" value="${e.url||''}" oninput="reloadHeFrame()">
+    <div style="font-size:11.5px;color:var(--text2);margin:8px 0 8px;line-height:1.6;">
+      👆 مرر بإصبعك جوه الصندوق باش تشوف الموقع كامل<br>
+      🟩 سحب المربع الأخضر من النص باش تحركو، ومن الزوايا باش تكبر/تصغر<br>
+      🔍 دوس ➕ / ➖ باش تكبر أو تصغر العرض وتقص بدقة أكثر<br>
+      كل شي بره المربع الأخضر ماغاديش يبان للمستخدم
     </div>
-    <div style="font-size:11px;color:var(--text2);margin:10px 0 6px;">👁 معاينة حية — بدل الأرقام لغاية توصل للجزء لي بغيتي</div>
-    <div id="heLoadNote" style="font-size:10.5px;color:#ffab2e;margin-bottom:6px;">⏳ جاري تحميل المعاينة... إيلا بقات فارغة، الموقع كايمنع التضمين</div>
-    <div style="width:100%;overflow:hidden;position:relative;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:#05070c;" id="heBoxWrap">
-      <iframe id="hePreviewFrame" src="${e.url||'about:blank'}" style="position:absolute;border:none;" scrolling="no" onload="document.getElementById('heLoadNote').style.display='none'"></iframe>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div id="heSizeLabel" style="font-size:12px;font-weight:800;color:var(--green);background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.3);padding:4px 10px;border-radius:8px;">📐 ${e.selW} × ${e.selH}</div>
+      <div style="display:flex;gap:6px;">
+        <button type="button" onclick="setHeZoom(0.8)" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:16px;cursor:pointer;">➖</button>
+        <button type="button" onclick="setHeZoom(1.25)" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:16px;cursor:pointer;">➕</button>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:14px;">
+    <div id="heStage" style="width:100%;height:400px;overflow:auto;position:relative;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:#111;-webkit-overflow-scrolling:touch;">
+      <div id="heSizer" style="position:relative;width:${e.iframeW}px;height:${e.iframeH}px;">
+        <div id="heInner" style="position:absolute;top:0;left:0;width:${e.iframeW}px;height:${e.iframeH}px;transform-origin:top left;">
+          <iframe id="hePreviewFrame" src="${e.url||'about:blank'}" style="position:absolute;top:0;left:0;width:${e.iframeW}px;height:${e.iframeH}px;border:none;pointer-events:none;" scrolling="no" onload="document.getElementById('heLoadNote').style.display='none'"></iframe>
+          <div id="heCropBox" style="position:absolute;top:${e.selY}px;left:${e.selX}px;width:${e.selW}px;height:${e.selH}px;border:2px solid #00e87a;box-shadow:0 0 0 2000px rgba(0,0,0,0.6);box-sizing:border-box;">
+            <div class="he-h" data-dir="move" style="position:absolute;inset:0;cursor:move;touch-action:none;"></div>
+            <div class="he-h" data-dir="nw" style="position:absolute;top:-10px;left:-10px;width:22px;height:22px;background:#00e87a;border:2px solid #fff;border-radius:50%;cursor:nwse-resize;touch-action:none;"></div>
+            <div class="he-h" data-dir="ne" style="position:absolute;top:-10px;right:-10px;width:22px;height:22px;background:#00e87a;border:2px solid #fff;border-radius:50%;cursor:nesw-resize;touch-action:none;"></div>
+            <div class="he-h" data-dir="sw" style="position:absolute;bottom:-10px;left:-10px;width:22px;height:22px;background:#00e87a;border:2px solid #fff;border-radius:50%;cursor:nesw-resize;touch-action:none;"></div>
+            <div class="he-h" data-dir="se" style="position:absolute;bottom:-10px;right:-10px;width:22px;height:22px;background:#00e87a;border:2px solid #fff;border-radius:50%;cursor:nwse-resize;touch-action:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="heLoadNote" style="font-size:10.5px;color:#ffab2e;margin-top:6px;">⏳ جاري تحميل المعاينة... إيلا بقات فارغة، الموقع كايمنع التضمين</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button type="button" class="btn-sm" style="flex:1;" onclick="centerHeCropBox()">🎯 رجّع لبلاصة المربع</button>
+      <button type="button" class="btn-sm" style="flex:1;" onclick="resetHeCropBox()">↺ إعادة ضبط</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
       <button class="btn btn-primary" style="flex:1;" onclick="saveHomeEmbed()">✅ نشر فالواجهة الرئيسية</button>
-      ${e.active?`<button class="btn btn-ghost" onclick="disableHomeEmbed()">إيقاف</button>`:''}
+      ${homeEmbed.active?`<button class="btn btn-ghost" onclick="disableHomeEmbed()">إيقاف</button>`:''}
     </div>
     <button class="btn btn-ghost" onclick="closeModal('homeEmbedModal')" style="margin-top:8px;">إلغاء</button>
   `;
 }
-function openHomeEmbedModal(){
+async function openHomeEmbedModal(){
+  // نجيب آخر نسخة محفوظة مباشرة من Firebase (بلا ما نعتمد على النسخة المحلية اللي يمكن ماوصلتش بعد)
+  try{
+    const snap = await get(ref(db,'homeEmbed'));
+    const val = snap.val();
+    if(val && typeof val==='object' && !Array.isArray(val)) homeEmbed=val;
+  }catch(e){ console.error('homeEmbed fetch failed',e); }
+  heState=Object.assign({iframeW:380,iframeH:900,selX:0,selY:0,selW:380,selH:200,url:''},
+    { url:homeEmbed.url, selX:homeEmbed.selX, selY:homeEmbed.selY, selW:homeEmbed.selW, selH:homeEmbed.selH, iframeW:homeEmbed.iframeW||380, iframeH:homeEmbed.iframeH||900 });
+  if(!heState.selW) heState.selW=heState.iframeW;
+  if(!heState.selH) heState.selH=200;
+  heHandlersBound=false;
+  heEditZoom=1;
   document.getElementById('homeEmbedModalBody').innerHTML=homeEmbedFormHTML();
   showModal('homeEmbedModal');
-  updateHomeEmbedPreview();
+  setTimeout(()=>{
+    attachHeCropHandlers();
+    // نسكرول أوتوماتيك لبلاصة المربع الأخضر باش ما يبقاش مخفي بره الشاشة
+    centerHeCropBox(true);
+  },30);
 }
-function updateHomeEmbedPreview(){
-  const boxW=parseInt(document.getElementById('heBoxW').value)||340;
-  const boxH=parseInt(document.getElementById('heBoxH').value)||220;
-  const ifW=parseInt(document.getElementById('heIfW').value)||400;
-  const ifH=parseInt(document.getElementById('heIfH').value)||700;
-  const offX=parseInt(document.getElementById('heOffX').value)||0;
-  const offY=parseInt(document.getElementById('heOffY').value)||0;
-  const wrap=document.getElementById('heBoxWrap');
-  wrap.style.width=boxW+'px';
-  wrap.style.height=boxH+'px';
-  wrap.style.maxWidth='100%';
+function reloadHeFrame(){
   const frame=document.getElementById('hePreviewFrame');
-  frame.style.width=ifW+'px';
-  frame.style.height=ifH+'px';
-  frame.style.top=(-offY)+'px';
-  frame.style.left=(-offX)+'px';
   const url=document.getElementById('heUrl').value.trim();
-  if(url && frame.getAttribute('data-loaded-url')!==url){
+  if(url && frame){
     frame.src=url;
-    frame.setAttribute('data-loaded-url',url);
     document.getElementById('heLoadNote').style.display='block';
   }
+}
+function renderHeCropBox(){
+  const box=document.getElementById('heCropBox');
+  if(!box) return;
+  box.style.top=heState.selY+'px';
+  box.style.left=heState.selX+'px';
+  box.style.width=heState.selW+'px';
+  box.style.height=heState.selH+'px';
+  const label=document.getElementById('heSizeLabel');
+  if(label) label.textContent='📐 '+heState.selW+' × '+heState.selH;
+}
+// يطبق درجة الزوم الحالية على منطقة التحرير (بلا ما يأثر على الإحداثيات المحفوظة)
+function renderHeZoom(){
+  const sizer=document.getElementById('heSizer');
+  const inner=document.getElementById('heInner');
+  if(!sizer||!inner) return;
+  sizer.style.width=Math.round(heState.iframeW*heEditZoom)+'px';
+  sizer.style.height=Math.round(heState.iframeH*heEditZoom)+'px';
+  inner.style.transform='scale('+heEditZoom+')';
+}
+function setHeZoom(factor){
+  const stage=document.getElementById('heStage');
+  // نحافظ على نفس نقطة الوسط المرئية وقت التكبير/التصغير
+  const centerContentX=stage?(stage.scrollLeft+stage.clientWidth/2)/heEditZoom:0;
+  const centerContentY=stage?(stage.scrollTop+stage.clientHeight/2)/heEditZoom:0;
+  heEditZoom=Math.max(0.3,Math.min(3,heEditZoom*factor));
+  renderHeZoom();
+  if(stage){
+    stage.scrollLeft=Math.max(0,centerContentX*heEditZoom-stage.clientWidth/2);
+    stage.scrollTop=Math.max(0,centerContentY*heEditZoom-stage.clientHeight/2);
+  }
+}
+// يرجع السكرول لبلاصة المربع الأخضر إيلا كان مخفي فوق السطح
+function centerHeCropBox(instant){
+  const stage=document.getElementById('heStage');
+  if(!stage) return;
+  stage.scrollTo({
+    top:Math.max(0, heState.selY*heEditZoom - (stage.clientHeight/2) + (heState.selH*heEditZoom/2)),
+    left:Math.max(0, heState.selX*heEditZoom - (stage.clientWidth/2) + (heState.selW*heEditZoom/2)),
+    behavior:instant?'auto':'smooth'
+  });
+}
+// يرجع المربع لوسط الصفحة بحجم افتراضي إيلا ضاع أو خرج بره النطاق
+function resetHeCropBox(){
+  heState.selX=0; heState.selY=0;
+  heState.selW=Math.min(heState.iframeW,380);
+  heState.selH=200;
+  heEditZoom=1;
+  renderHeCropBox();
+  renderHeZoom();
+  centerHeCropBox(true);
+}
+window.centerHeCropBox=centerHeCropBox;
+window.resetHeCropBox=resetHeCropBox;
+window.setHeZoom=setHeZoom;
+function attachHeCropHandlers(){
+  if(heHandlersBound) return;
+  heHandlersBound=true;
+  document.querySelectorAll('#heCropBox .he-h').forEach(handle=>{
+    handle.addEventListener('pointerdown', e=>{
+      e.preventDefault(); e.stopPropagation();
+      const dir=handle.getAttribute('data-dir');
+      const startX=e.clientX, startY=e.clientY;
+      const start={x:heState.selX,y:heState.selY,w:heState.selW,h:heState.selH};
+      const MIN=50;
+      function onMove(ev){
+        // نقسم على درجة الزوم باش الحركة على الشاشة تتحول لإحداثيات حقيقية صحيحة
+        const dx=(ev.clientX-startX)/heEditZoom, dy=(ev.clientY-startY)/heEditZoom;
+        let {x,y,w,h}=start;
+        if(dir==='move'){ x=start.x+dx; y=start.y+dy; }
+        else if(dir==='se'){ w=start.w+dx; h=start.h+dy; }
+        else if(dir==='ne'){ w=start.w+dx; h=start.h-dy; y=start.y+dy; }
+        else if(dir==='sw'){ w=start.w-dx; x=start.x+dx; h=start.h+dy; }
+        else if(dir==='nw'){ w=start.w-dx; x=start.x+dx; h=start.h-dy; y=start.y+dy; }
+        w=Math.max(MIN,w); h=Math.max(MIN,h);
+        x=Math.max(0,Math.min(x,heState.iframeW-w));
+        y=Math.max(0,Math.min(y,heState.iframeH-h));
+        heState.selX=Math.round(x); heState.selY=Math.round(y);
+        heState.selW=Math.round(w); heState.selH=Math.round(h);
+        renderHeCropBox();
+      }
+      function onUp(){
+        window.removeEventListener('pointermove',onMove);
+        window.removeEventListener('pointerup',onUp);
+      }
+      window.addEventListener('pointermove',onMove);
+      window.addEventListener('pointerup',onUp);
+    });
+  });
 }
 function saveHomeEmbed(){
   const url=document.getElementById('heUrl').value.trim();
   if(!url) return toast('⚠️ أدخل رابط التضمين');
   homeEmbed={
     url,
-    boxW:parseInt(document.getElementById('heBoxW').value)||340,
-    boxH:parseInt(document.getElementById('heBoxH').value)||220,
-    iframeW:parseInt(document.getElementById('heIfW').value)||400,
-    iframeH:parseInt(document.getElementById('heIfH').value)||700,
-    offsetX:parseInt(document.getElementById('heOffX').value)||0,
-    offsetY:parseInt(document.getElementById('heOffY').value)||0,
+    iframeW:heState.iframeW, iframeH:heState.iframeH,
+    selX:heState.selX, selY:heState.selY, selW:heState.selW, selH:heState.selH,
     active:true
   };
   fbSave('homeEmbed',homeEmbed);
@@ -4625,10 +4951,61 @@ function disableHomeEmbed(){
   toast('⏹ تم إيقاف العرض المباشر');
   homePage();
 }
+// تعديل سريع للحجم بالأرقام مباشرة من الواجهة الرئيسية (بلا فتح أداة القص كاملة)
+async function quickEditHeSize(){
+  try{
+    const snap=await get(ref(db,'homeEmbed'));
+    const val=snap.val();
+    if(val && typeof val==='object' && !Array.isArray(val)) homeEmbed=val;
+  }catch(e){ console.error('homeEmbed fetch failed',e); }
+  const curW=homeEmbed.selW||380, curH=homeEmbed.selH||200;
+  const wStr=prompt('📐 العرض (px):', curW);
+  if(wStr===null) return;
+  const hStr=prompt('📐 الارتفاع (px):', curH);
+  if(hStr===null) return;
+  let w=parseInt(wStr), h=parseInt(hStr);
+  if(!w||!h||w<30||h<30) return toast('⚠️ أدخل أرقام صحيحة (30 وأكثر)');
+  const ifW=homeEmbed.iframeW||380, ifH=homeEmbed.iframeH||900;
+  w=Math.min(w,ifW); h=Math.min(h,ifH);
+  // نتأكد بلي المربع مايخرجش بره حدود الصفحة الأصلية
+  homeEmbed.selX=Math.max(0,Math.min(homeEmbed.selX||0, ifW-w));
+  homeEmbed.selY=Math.max(0,Math.min(homeEmbed.selY||0, ifH-h));
+  homeEmbed.selW=w; homeEmbed.selH=h;
+  fbSave('homeEmbed',homeEmbed);
+  toast('✅ تم تحديث الحجم');
+  homePage();
+}
+window.quickEditHeSize=quickEditHeSize;
+// كيمدد الجزء المقصوص باش يعمر عرض الكارت كامل مع الحفاظ على النسبة (بلا تشويه)
+let heScaleResizeBound=false;
+function applyHomeEmbedScale(){
+  const outer=document.getElementById('heViewOuter');
+  const frame=document.getElementById('heViewFrame');
+  if(!outer||!frame) return;
+  const selW=parseFloat(frame.dataset.selw), selH=parseFloat(frame.dataset.selh);
+  const selX=parseFloat(frame.dataset.selx), selY=parseFloat(frame.dataset.sely);
+  const ifW=parseFloat(frame.dataset.ifw), ifH=parseFloat(frame.dataset.ifh);
+  if(!selW||!selH){ return; }
+  outer.style.minHeight='0';
+  const w=outer.clientWidth;
+  if(!w){ requestAnimationFrame(applyHomeEmbedScale); return; }
+  const scale=w/selW;
+  outer.style.height=Math.round(selH*scale)+'px';
+  frame.style.width=Math.round(ifW*scale)+'px';
+  frame.style.height=Math.round(ifH*scale)+'px';
+  frame.style.top=Math.round(-selY*scale)+'px';
+  frame.style.left=Math.round(-selX*scale)+'px';
+  if(!heScaleResizeBound){
+    heScaleResizeBound=true;
+    window.addEventListener('resize', ()=>{ if(document.getElementById('heViewOuter')) applyHomeEmbedScale(); });
+  }
+}
 window.openHomeEmbedModal=openHomeEmbedModal;
-window.updateHomeEmbedPreview=updateHomeEmbedPreview;
+window.reloadHeFrame=reloadHeFrame;
 window.saveHomeEmbed=saveHomeEmbed;
 window.disableHomeEmbed=disableHomeEmbed;
+window.applyHomeEmbedScale=applyHomeEmbedScale;
+
 
 // ===========================
 // PLAYERS
@@ -12148,11 +12525,6 @@ function applyGift(name,giftId,g){
   <div class="modal-box" id="addPlayerModalBody" style="max-width:360px;"></div>
 </div>
 
-<!-- HOME LIVE EMBED MODAL -->
-<div class="modal-overlay" id="homeEmbedModal">
-  <div class="modal-box" id="homeEmbedModalBody" style="max-width:400px;max-height:90vh;overflow-y:auto;"></div>
-</div>
-
 <!-- OVR EDIT MODAL -->
 <div class="modal-overlay" id="ovrEditModal">
   <div class="modal-box" style="max-width:320px;">
@@ -12381,6 +12753,18 @@ function applyGift(name,giftId,g){
 
 </div>
 <!-- ===== END AIR HOCKEY 1V1 OVERLAY ===== -->
+
+<script>
+// ======= EXPANDABLE TAB BAR — tap to expand/collapse (like the video) =======
+function syncNavToggle(btn){
+  const icon = btn.querySelector('.nav-icon').innerHTML;
+  const label = btn.querySelector('span').textContent;
+  const toggle = document.getElementById('navToggle');
+  if(!toggle) return;
+  toggle.querySelector('.nav-icon').innerHTML = icon;
+  document.getElementById('navToggleLabel').textContent = label;
+}
+</script>
 
 </body>
 </html>
