@@ -2599,6 +2599,85 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
 .rarity-gold   { background: linear-gradient(160deg,#ffe79a,#ffb800); }
 .rarity-icon   { background: linear-gradient(160deg,#c9a8ff,#7c3aed); color:#fff; }
 
+/* ============ ملحمي EPIC — OVR 100-104: أحمر متوهج + زاوية لامعة + بطاقة نابضة ============ */
+.rarity-epic {
+  background: linear-gradient(155deg,#ff6b81 0%,#e0113f 52%,#690a1f 100%);
+  border: 1.5px solid rgba(255,255,255,0.55);
+  color:#fff; text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+  position: relative; overflow: hidden;
+  animation: epicGlow 2.2s ease-in-out infinite;
+}
+.rarity-epic::before {
+  content:''; position:absolute; width:0; height:0; bottom:0; right:0;
+  border-width:0 0 15px 15px; border-style:solid;
+  border-color:transparent transparent rgba(255,255,255,0.92) transparent;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.75));
+  pointer-events:none;
+}
+.rarity-epic::after {
+  content:''; position:absolute; top:0; left:-160%; width:55%; height:100%;
+  background: linear-gradient(100deg,transparent 0%,rgba(255,255,255,0.55) 50%,transparent 100%);
+  transform: skewX(-18deg);
+  animation: epicSweep 2.8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes epicGlow {
+  0%,100% { filter: drop-shadow(0 0 6px rgba(255,20,70,0.5)); }
+  50%     { filter: drop-shadow(0 0 15px rgba(255,20,70,0.95)); }
+}
+@keyframes epicSweep {
+  0%,15% { left:-160%; }
+  60%,100% { left:160%; }
+}
+.coll-card.rarity-epic .cc-club, .p-card-inner.rarity-epic .cc-club { color:rgba(255,255,255,0.8); }
+.p-card-inner.rarity-epic .cc-stats { color:rgba(255,255,255,0.9); }
+
+/* ============ أسطوري LEGENDARY — OVR 105-119: تدرج ذهبي فاخر (مو أصفر) + لمعة متحركة ============ */
+.rarity-legendary {
+  background: linear-gradient(172deg,#2a1605 0%,#502d0a 26%,#a36b31 62%,#edd987 100%);
+  border: 1.5px solid rgba(255,240,200,0.65);
+  color:#fff6df; text-shadow: 0 1px 3px rgba(42,22,5,0.85), 0 0 12px rgba(80,45,10,0.5);
+  box-shadow: 0 0 14px rgba(237,217,135,0.35);
+  position: relative; overflow: hidden;
+}
+.rarity-legendary::after {
+  content:''; position:absolute; top:0; left:-160%; width:55%; height:100%;
+  background: linear-gradient(100deg,transparent 0%,rgba(255,248,222,0.8) 50%,transparent 100%);
+  transform: skewX(-18deg);
+  animation: legendarySheen 3.4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes legendarySheen {
+  0%,20% { left:-160%; }
+  62%,100% { left:160%; }
+}
+.coll-card.rarity-legendary .cc-club, .p-card-inner.rarity-legendary .cc-club { color:rgba(255,246,223,0.8); }
+.p-card-inner.rarity-legendary .cc-stats { color:rgba(255,246,223,0.9); }
+
+/* ============ أيقوني ICONIC — OVR 120+: الأقوى إطلاقاً — أسود حصري بلمسة هولوغرافية دوّارة وقصّة درع ============ */
+.rarity-iconic {
+  background: linear-gradient(150deg,#0a0a12 0%,#1c1a2b 50%,#08070d 100%);
+  clip-path: polygon(0% 0%,100% 0%,100% 94%,50% 100%,0% 94%);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  color:#fff; text-shadow: 0 0 10px rgba(255,255,255,0.55);
+  position: relative; overflow: hidden; z-index:0;
+  animation: iconicGlow 2.6s ease-in-out infinite;
+}
+.rarity-iconic::before {
+  content:''; position:absolute; inset:-50%; z-index:-1;
+  background: conic-gradient(from 0deg,#ff5cf0,#5cc8ff,#5cffbf,#f7ff5c,#ff9a5c,#ff5cf0);
+  opacity:0.4; mix-blend-mode:overlay;
+  animation: iconicSpin 6s linear infinite;
+  pointer-events:none;
+}
+@keyframes iconicSpin { to { transform:rotate(360deg); } }
+@keyframes iconicGlow {
+  0%,100% { filter:drop-shadow(0 0 8px rgba(255,255,255,0.35)) drop-shadow(0 0 16px rgba(160,130,255,0.3)); }
+  50%     { filter:drop-shadow(0 0 16px rgba(255,255,255,0.65)) drop-shadow(0 0 30px rgba(160,130,255,0.55)); }
+}
+.coll-card.rarity-iconic .cc-club, .p-card-inner.rarity-iconic .cc-club { color:rgba(255,255,255,0.8); }
+.p-card-inner.rarity-iconic .cc-stats { color:rgba(255,255,255,0.9); }
+
 /* ======================================================
    CARD COLLECTION
 ====================================================== */
@@ -2682,6 +2761,8 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
 .pack-card.show { display:flex; animation: cardReveal 0.65s cubic-bezier(.22,1,.32,1) forwards; }
 @keyframes cardReveal { to { opacity:1; transform: scale(1) rotateY(0deg); } }
 .pack-card.rarity-icon { box-shadow: 0 0 50px rgba(139,92,246,0.55), 0 25px 70px rgba(0,0,0,0.55); }
+.pack-card.rarity-epic { box-shadow: 0 0 50px rgba(255,20,70,0.55), 0 25px 70px rgba(0,0,0,0.55); }
+.pack-card.rarity-legendary { box-shadow: 0 0 55px rgba(237,217,135,0.6), 0 25px 70px rgba(0,0,0,0.55); }
 
 .pc-pos {
   font-size:12px; font-weight:900; letter-spacing:3px;
@@ -2698,16 +2779,22 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
   font-size:17px; font-weight:900; text-align:center; color:#1a1208; opacity:0;
 }
 .pack-card.rarity-icon .pc-name { color:#fff; }
+.pack-card.rarity-epic .pc-name, .pack-card.rarity-iconic .pc-name { color:#fff; }
+.pack-card.rarity-legendary .pc-name { color:#fff6df; }
 .pc-name.show { animation: popIn 0.4s forwards; }
 .pc-club {
   font-size:12px; font-weight:700; opacity:0; margin-top:4px; color:rgba(0,0,0,0.6);
 }
 .pack-card.rarity-icon .pc-club { color: rgba(255,255,255,0.75); }
+.pack-card.rarity-epic .pc-club, .pack-card.rarity-iconic .pc-club { color: rgba(255,255,255,0.75); }
+.pack-card.rarity-legendary .pc-club { color: rgba(255,246,223,0.75); }
 .pc-club.show { animation: popIn 0.4s forwards; }
 .pc-ovr {
   font-size:46px; font-weight:900; margin-top:auto; opacity:0; color:#1a1208;
 }
 .pack-card.rarity-icon .pc-ovr { color:#fff; text-shadow:0 0 24px rgba(255,255,255,0.7); }
+.pack-card.rarity-epic .pc-ovr, .pack-card.rarity-iconic .pc-ovr { color:#fff; text-shadow:0 0 24px rgba(255,255,255,0.7); }
+.pack-card.rarity-legendary .pc-ovr { color:#fff6df; text-shadow:0 1px 3px rgba(42,22,5,0.85), 0 0 16px rgba(237,217,135,0.6); }
 .pc-ovr.show { animation: ovrPop 0.55s forwards; }
 .pc-rarity-tag {
   font-size:10px; font-weight:900; letter-spacing:2px; margin-top:2px; opacity:0;
@@ -5322,7 +5409,7 @@ function addPlayerFormHTML(){
     <select id="pPos"><option>ST</option><option>GK</option><option>CB</option><option>CM</option><option>RW</option><option>LW</option><option>CAM</option><option>CDM</option><option>RB</option><option>LB</option></select>
     <input id="pTeam" placeholder="الفريق">
     <input id="pGoals" type="number" placeholder="عدد الأهداف" value="0">
-    ${isAdmin?`<input id="pOvr" type="number" placeholder="التقييم OVR (40-99)" min="40" max="99">`:''}
+    ${isAdmin?`<input id="pOvr" type="number" placeholder="التقييم OVR (40-120)" min="40" max="120">`:''}
     <!-- AVATAR PICKER -->
     <div style="margin-top:12px;">
       <div style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600;">🖼 صورة اللاعب</div>
@@ -5478,7 +5565,7 @@ async function addPlayer(){
       img=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(blob);});
     }catch(e){ /* keep url as-is */ }
   }
-  players.push({id:Date.now(),name,pos:document.getElementById('pPos').value,team:document.getElementById('pTeam').value,goals:parseInt(document.getElementById('pGoals').value)||0,ovr:Math.max(40,Math.min(99,parseInt(document.getElementById('pOvr')?.value)||60)),img,yellowCards:0,redCards:0});
+  players.push({id:Date.now(),name,pos:document.getElementById('pPos').value,team:document.getElementById('pTeam').value,goals:parseInt(document.getElementById('pGoals').value)||0,ovr:Math.max(40,Math.min(120,parseInt(document.getElementById('pOvr')?.value)||60)),img,yellowCards:0,redCards:0});
   save(); closeModal('addPlayerModal'); toast('✅ تمت إضافة '+name); playersPage();
 }
 async function requestAddPlayer(){
@@ -5515,7 +5602,7 @@ function savePlayerOvr(){
   const p=players[i];
   if(!p) return;
   const newOvr=parseInt(document.getElementById('ovrEditInput').value);
-  if(isNaN(newOvr)||newOvr<40||newOvr>99) return toast('⚠️ أدخل رقم بين 40 و 99');
+  if(isNaN(newOvr)||newOvr<40||newOvr>120) return toast('⚠️ أدخل رقم بين 40 و 120');
   const oldOvr=p.ovr||60;
 
   // رتب كل اللاعبين قبل التعديل
@@ -7303,7 +7390,7 @@ function myBestTeamPage(){
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <input id="btTeam" placeholder="الفريق" style="margin-top:8px;">
-          <input id="btOvr" type="number" placeholder="OVR (40-99)" min="40" max="99" style="margin-top:8px;">
+          <input id="btOvr" type="number" placeholder="OVR (40-120)" min="40" max="120" style="margin-top:8px;">
         </div>
         <div style="margin-top:8px;font-size:11px;color:var(--text2);">صورة (اختياري)</div>
         <input id="btImg" type="file" accept="image/*" style="margin-top:4px;font-size:11px;">
@@ -7319,7 +7406,7 @@ function myBestTeamPage(){
           const i=bestTeamPlayers.length-1-ri;
           const ovr=parseInt(p.ovr)||70;
           const rarity=cardRarity(ovr);
-          return `<div class="player-card" style="border-color:${rarity.key==='icon'?'rgba(192,132,252,0.3)':rarity.key==='gold'?'rgba(255,214,10,0.25)':rarity.key==='silver'?'rgba(192,192,192,0.2)':'rgba(205,127,50,0.2)'};">
+          return `<div class="player-card" style="border-color:${rarity.color}4d;">
             ${p.img?`<img src="${p.img}" style="width:54px;height:54px;border-radius:14px;object-fit:cover;flex-shrink:0;">`:`<div class="player-thumb ${rarity.css}" style="width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0;">${ovr}</div>`}
             <div class="player-info" style="flex:1;">
               <h3>${p.name} <span style="font-size:13px;font-weight:900;color:${rarity.color};">⭐${ovr}</span></h3>
@@ -7340,7 +7427,7 @@ async function addToBestTeam(){
   if(!name) return toast('⚠️ أدخل اسم اللاعب');
   const pos=document.getElementById('btPos').value;
   const team=document.getElementById('btTeam').value.trim();
-  const ovr=Math.max(40,Math.min(99,parseInt(document.getElementById('btOvr').value)||70));
+  const ovr=Math.max(40,Math.min(120,parseInt(document.getElementById('btOvr').value)||70));
   let img='';
   const file=document.getElementById('btImg').files[0];
   if(file){ toast('⏳ جاري رفع الصورة...'); img=await toBase64(file); }
@@ -7497,8 +7584,8 @@ function managerCardsPage(){
       <input id="cName" placeholder="اسم اللاعب">
       <select id="cPos"><option>ST</option><option>GK</option><option>CB</option><option>CM</option><option>RW</option><option>LW</option><option>CAM</option><option>CDM</option><option>RB</option><option>LB</option><option>RM</option><option>LM</option></select>
       <input id="cClub" placeholder="النادي / الفريق">
-      <input id="cOvr" type="number" placeholder="التقييم OVR (40-99)" min="40" max="99">
-      <div style="font-size:11px;color:var(--text2);margin-top:4px;">🥉 &lt;75 برونزي • 🥈 75-84 فضي • 🥇 85-89 ذهبي • 💎 90+ ICON</div>
+      <input id="cOvr" type="number" placeholder="التقييم OVR (40-120)" min="40" max="120">
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.6;">🥉 &lt;75 برونزي • 🥈 75-84 فضي • 🥇 85-89 ذهبي • 💎 90-99 ICON<br>🔥 100-104 ملحمي • 🏆 105-119 أسطوري • 👑 120+ ايقوني</div>
       <div style="margin-top:10px;font-size:12px;color:var(--text2);">صورة اللاعب (اختياري)</div>
       <input id="cImg" type="file" accept="image/*">
       <button class="btn btn-primary" onclick="addCardToPool()">➕ إضافة اللاعب</button>
@@ -7526,7 +7613,7 @@ function importPlayerToCardPool(name){
   const p=players.find(pl=>pl.name===name);
   if(!p) return toast('⚠️ اللاعب غير موجود');
   if(cardPool.find(c=>c.name===p.name)) return toast('⚠️ اللاعب موجود بالفعل');
-  const ovr=Math.max(40,Math.min(99,parseInt(p.ovr)||60));
+  const ovr=Math.max(40,Math.min(120,parseInt(p.ovr)||60));
   const newCard={id:'card_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:p.name,pos:p.pos||'ST',club:p.team||'',ovr,img:p.img||''};
   cardPool.push(newCard);
   try{ localStorage.setItem('cardPool_v2', JSON.stringify(cardPool)); } catch(e){}
@@ -7537,7 +7624,7 @@ function importPlayerToCardPool(name){
 async function addCardToPool(){
   const name=document.getElementById('cName').value.trim();
   if(!name) return toast('⚠️ أدخل اسم اللاعب');
-  const ovr=Math.max(40,Math.min(99,parseInt(document.getElementById('cOvr').value)||60));
+  const ovr=Math.max(40,Math.min(120,parseInt(document.getElementById('cOvr').value)||60));
   let img='';
   const file=document.getElementById('cImg').files[0];
   if(file){
@@ -7734,7 +7821,7 @@ function offlineAiAnswer(question){
 
   // === MY CLOUB ===
   if(q.includes('my cloub') || q.includes('بطاقات') || q.includes('كروت') || q.includes('باكج') || q.includes('مجموعة')){
-    return `🃏 **نظام MY CLOUB:**\n\nنظام بطاقات FIFA داخل التطبيق!\n\n**تصنيفات البطاقات:**\n🥉 برونزي — OVR أقل من 75\n🥈 فضي — OVR 75-84\n🥇 ذهبي — OVR 85-89\n💎 ICON — OVR 90+\n\n**الباكجات:**\n• 🥉 برونزي — 💎 150 جوهرة\n• 🥇 ذهبي — 💎 600 جوهرة\n• 💎 ICON — 💎 2000 جوهرة\n\n**كيف تشتري باكج؟**\nاذهب لـ More ← MY CLOUB ← 💎 المتجر ← باكجات\n\nالمانجر يضيف اللاعبين ويوزعهم!`;
+    return `🃏 **نظام MY CLOUB:**\n\nنظام بطاقات FIFA داخل التطبيق!\n\n**تصنيفات البطاقات:**\n🥉 برونزي — OVR أقل من 75\n🥈 فضي — OVR 75-84\n🥇 ذهبي — OVR 85-89\n💎 ICON — OVR 90-99\n🔥 ملحمي — OVR 100-104\n🏆 أسطوري — OVR 105-119\n👑 ايقوني — OVR 120+ (الأقوى!)\n\n**الباكجات:**\n• 🥉 برونزي — 💎 150 جوهرة\n• 🥇 ذهبي — 💎 600 جوهرة\n• 💎 ICON — 💎 2000 جوهرة\n\n**كيف تشتري باكج؟**\nاذهب لـ More ← MY CLOUB ← 💎 المتجر ← باكجات\n\nالمانجر يضيف اللاعبين ويوزعهم!`;
   }
 
   // === صندوق الحظ LF ===
@@ -7924,7 +8011,7 @@ ${teamsList}
 ${playersList}
 
 == ميزات التطبيق ==
-- MY CLOUB: نظام بطاقات لاعبين (تصنيفات: برونزي/فضي/ذهبي/ICON) مع تشكيلة قابلة للتعديل.
+- MY CLOUB: نظام بطاقات لاعبين (تصنيفات: برونزي/فضي/ذهبي/ICON/ملحمي/أسطوري/ايقوني) مع تشكيلة قابلة للتعديل.
 - متجر الجواهر (💎): شراء جواهر لفتح ميزات مثل VOT (التصويت) أو عناصر متجر الجوائز (أصوات، رقصات، سكنات).
 - الدردشة: غرف شات مع دعم الصور وتسجيل صوتي.
 - لعبة ركلات الترجيح: تفردي وضد لاعبين آخرين (1v1).
@@ -9088,10 +9175,13 @@ function rollLootbox(){
 // cardPool item shape: {id, name, pos, club, ovr, img}
 function cardRarity(ovr){
   ovr=parseInt(ovr)||0;
-  if(ovr>=90) return {key:'icon',   name:'ICON',   color:'#c084fc', css:'rarity-icon'};
-  if(ovr>=85) return {key:'gold',   name:'GOLD',   color:'#ffd60a', css:'rarity-gold'};
-  if(ovr>=75) return {key:'silver', name:'SILVER', color:'#c0c0c0', css:'rarity-silver'};
-  return        {key:'bronze', name:'BRONZE', color:'#cd7f32', css:'rarity-bronze'};
+  if(ovr>=120) return {key:'iconic',    name:'ايقوني',   color:'#f4f0ff', css:'rarity-iconic'};
+  if(ovr>=105) return {key:'legendary', name:'أسطوري',   color:'#edd987', css:'rarity-legendary'};
+  if(ovr>=100) return {key:'epic',      name:'ملحمي',    color:'#ff4d6d', css:'rarity-epic'};
+  if(ovr>=90)  return {key:'icon',      name:'ICON',     color:'#c084fc', css:'rarity-icon'};
+  if(ovr>=85)  return {key:'gold',      name:'GOLD',     color:'#ffd60a', css:'rarity-gold'};
+  if(ovr>=75)  return {key:'silver',    name:'SILVER',   color:'#c0c0c0', css:'rarity-silver'};
+  return         {key:'bronze', name:'BRONZE', color:'#cd7f32', css:'rarity-bronze'};
 }
 const PACKS = [
   {id:'bronze', name:'باكج برونزي', icon:'🥉', price:150,  minOvr:0,  desc:'فرصة لاعبين عاديين، مع نسبة مفاجأة دائماً'},
@@ -9161,7 +9251,7 @@ function showPackOverlay(card){
   const rarity=cardRarity(card.ovr);
   const stage=document.getElementById('packStage');
   stage.innerHTML=`
-    <div class="pack-closed" id="packClosed">${rarity.key==='icon'?'💎':rarity.key==='gold'?'🥇':rarity.key==='silver'?'🥈':'🥉'}</div>
+    <div class="pack-closed" id="packClosed">${({iconic:'👑',legendary:'🏆',epic:'🔥',icon:'💎',gold:'🥇',silver:'🥈'})[rarity.key]||'🥉'}</div>
     <div class="pack-tap-hint" id="packTapHint">اضغط للفتح ✨</div>
     <div class="pack-card ${rarity.css}" id="packCard">
       <div class="pack-confetti" id="packConfetti"></div>
@@ -9170,7 +9260,7 @@ function showPackOverlay(card){
       <div class="pc-name" id="pcName">${card.name}</div>
       <div class="pc-club" id="pcClub">🏟️ ${card.club||'-'}</div>
       <div class="pc-ovr" id="pcOvr">${card.ovr||'?'}</div>
-      <div class="pc-rarity-tag" id="pcRarityTag" style="color:${rarity.css==='rarity-icon'?'#fff':rarity.color}">${rarity.name}</div>
+      <div class="pc-rarity-tag" id="pcRarityTag" style="color:${rarity.key==='icon'||rarity.key==='epic'||rarity.key==='iconic'?'#fff':rarity.key==='legendary'?'#fff6df':rarity.color}">${rarity.name}</div>
     </div>
     <div class="pack-actions" id="packActions" style="display:none;">
       <button class="btn btn-primary" style="flex:1;" onclick="closePackOverlay()">✅ إضافة إلى مجموعتي</button>
@@ -9194,7 +9284,7 @@ function openPackAnimation(rarity){
     setTimeout(()=>{
       document.getElementById('pcOvr').classList.add('show');
       document.getElementById('pcRarityTag').classList.add('show');
-      if(rarity.key==='gold' || rarity.key==='icon') spawnConfetti(rarity);
+      if(['gold','icon','epic','legendary','iconic'].includes(rarity.key)) spawnConfetti(rarity);
       document.getElementById('packActions').style.display='flex';
     }, 1200);
   }, 350);
@@ -9202,7 +9292,13 @@ function openPackAnimation(rarity){
 function spawnConfetti(rarity){
   const box=document.getElementById('packConfetti');
   if(!box) return;
-  const colors = rarity.key==='icon' ? ['#c084fc','#ffd60a','#00b8ff','#ffffff'] : ['#ffd60a','#ff9500','#ffffff'];
+  const confettiMap = {
+    iconic: ['#ffffff','#c9a8ff','#5cc8ff','#ff5cf0','#f7ff5c'],
+    legendary: ['#edd987','#a36b31','#fff6df','#ffb800'],
+    epic: ['#ff4d6d','#ff9500','#ffffff'],
+    icon: ['#c084fc','#ffd60a','#00b8ff','#ffffff'],
+  };
+  const colors = confettiMap[rarity.key] || ['#ffd60a','#ff9500','#ffffff'];
   let html='';
   for(let i=0;i<26;i++){
     const left=Math.random()*100;
@@ -10148,7 +10244,25 @@ function votePage(){
       <input id="voteTitle" placeholder="عنوان التصويت (مثال: لاعب الموسم)" value="${voteAward.title||''}">
       <button class="btn btn-primary" onclick="saveVoteTitle()" style="margin-top:8px;">💾 حفظ العنوان</button>
       <div style="border-top:1px solid var(--border);margin:14px 0;padding-top:14px;">
-        <div class="section-title" style="font-size:14px;">➕ إضافة مرشح</div>
+        <div class="section-title" style="font-size:14px;">⚡ إضافة مرشح من اللاعبين</div>
+        ${players.length===0?`<div style="font-size:11px;color:var(--text2);">لا يوجد لاعبون مسجلون بعد في قسم اللاعبين</div>`:
+          players.slice().sort((a,b)=>(b.ovr||0)-(a.ovr||0)).map(p=>{
+            const already=nominees.some(n=>n.name===p.name);
+            const ovr=parseInt(p.ovr)||60;
+            const rarity=cardRarity(ovr);
+            return `<div class="player-card" style="border-color:${rarity.color}4d;">
+              ${p.img?`<img src="${p.img}">`:`<div class="player-thumb ${rarity.css}" style="display:flex;align-items:center;justify-content:center;font-weight:900;">${ovr}</div>`}
+              <div class="player-info" style="flex:1;">
+                <h3>${p.name}</h3>
+                <span class="pos-badge">${p.pos||'?'}</span>
+                <p>🏟️ ${p.team||'-'} • <span style="color:${rarity.color};font-weight:800;">${rarity.name} ${ovr}</span></p>
+              </div>
+              ${already?`<span style="color:var(--green);font-size:11px;white-space:nowrap;">✅ مرشح</span>`:`<button class="btn-sm btn-primary" style="width:auto;margin:0;" onclick="addNomineeFromPlayer('${p.name.replace(/'/g,"\\'")}')">➕</button>`}
+            </div>`;
+          }).join('')}
+      </div>
+      <div style="border-top:1px solid var(--border);margin:14px 0;padding-top:14px;">
+        <div class="section-title" style="font-size:14px;">✍️ أو أضف مرشح يدوياً (غير مسجّل كلاعب)</div>
         <input id="nomName" placeholder="اسم المرشح">
         <input id="nomImg" type="file" accept="image/*">
         <button class="btn btn-primary" onclick="addNominee()">➕ إضافة</button>
@@ -10159,10 +10273,14 @@ function votePage(){
         nominees.map((n,i)=>{
           const pct=totalVotes>0?Math.round(((n.votes||[]).length/totalVotes)*100):0;
           const voted=(n.votes||[]).includes(currentUser);
-          return `<div class="player-card">
-            ${n.img?`<img src="${n.img}">`:'<div class="player-thumb">🏆</div>'}
+          const rarity=n.ovr?cardRarity(n.ovr):null;
+          return `<div class="player-card" ${rarity?`style="border-color:${rarity.color}4d;"`:''}>
+            ${n.img?`<img src="${n.img}" ${rarity?`style="border:2px solid ${rarity.color};"`:''}>`:
+              rarity?`<div class="player-thumb ${rarity.css}" style="display:flex;align-items:center;justify-content:center;font-weight:900;">${n.ovr}</div>`:
+              '<div class="player-thumb">🏆</div>'}
             <div class="player-info" style="flex:1;">
               <h3>${n.name}</h3>
+              ${rarity?`<span class="pos-badge" style="background:${rarity.color}22;color:${rarity.color};">${n.pos?n.pos+' • ':''}${rarity.name} ${n.ovr}</span>`:''}
               <div class="xp-bar-track"><div class="xp-bar-fill" style="width:${pct}%;"></div></div>
               <p>${(n.votes||[]).length} صوت (${pct}%)</p>
             </div>
@@ -10188,6 +10306,16 @@ async function addNominee(){
   voteAward.nominees=voteAward.nominees||[];
   voteAward.nominees.push({id:Date.now(),name,img,votes:[]});
   fbSave('voteAward',voteAward); toast('✅ تمت الإضافة'); votePage();
+}
+function addNomineeFromPlayer(name){
+  const p=players.find(pl=>pl.name===name);
+  if(!p) return toast('⚠️ اللاعب غير موجود');
+  voteAward.nominees=voteAward.nominees||[];
+  if(voteAward.nominees.some(n=>n.name===p.name)) return toast('⚠️ هذا اللاعب مرشح بالفعل');
+  voteAward.nominees.push({id:Date.now(),name:p.name,img:p.img||'',pos:p.pos||'',team:p.team||'',ovr:parseInt(p.ovr)||60,votes:[]});
+  fbSave('voteAward',voteAward);
+  toast('✅ '+p.name+' أصبح مرشحاً 🗳️');
+  votePage();
 }
 function deleteNominee(i){
   voteAward.nominees.splice(i,1);
@@ -11795,7 +11923,7 @@ window.changePassword=changePassword; window.saveRecoveryInfo=saveRecoveryInfo;
 window.switchRoom=switchRoom; window.sendMsg=sendMsg; window.previewChatImg=previewChatImg; window.cancelChatImg=cancelChatImg;
 window.previewProfilePhoto=previewProfilePhoto; window.quickUpdatePhoto=quickUpdatePhoto;
 window.saveVoteTitle=saveVoteTitle; window.addNominee=addNominee; window.deleteNominee=deleteNominee;
-window.resetVotes=resetVotes; window.castVote=castVote;
+window.resetVotes=resetVotes; window.castVote=castVote; window.addNomineeFromPlayer=addNomineeFromPlayer;
 window.openGemShop=openGemShop; window.buyVotAccess=buyVotAccess; window.buyVotAccessFromShop=buyVotAccessFromShop;
 window.managerPanelPage=managerPanelPage; window.renderUserControls=renderUserControls;
 window.managerAddXP=managerAddXP; window.managerGiveGems=managerGiveGems;
@@ -12719,13 +12847,13 @@ function applyGift(name,giftId,g){
 <div class="modal-overlay" id="ovrEditModal">
   <div class="modal-box" style="max-width:320px;">
     <div id="ovrEditTitle" style="font-size:17px;font-weight:800;margin-bottom:14px;background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">أدخل قيمة OVR (40 → 99)</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">أدخل قيمة OVR (40 → 120)</div>
     <input type="hidden" id="ovrEditIdx">
-    <input id="ovrEditInput" type="number" min="40" max="99" placeholder="مثال: 85" style="font-size:28px;font-weight:900;text-align:center;color:var(--green);">
+    <input id="ovrEditInput" type="number" min="40" max="120" placeholder="مثال: 85" style="font-size:28px;font-weight:900;text-align:center;color:var(--green);">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;">
       <button onclick="document.getElementById('ovrEditInput').value=Math.max(40,parseInt(document.getElementById('ovrEditInput').value||60)-1)" style="padding:10px;border-radius:10px;background:rgba(255,59,85,0.1);border:1px solid rgba(255,59,85,0.3);color:var(--red);font-size:18px;font-weight:900;cursor:pointer;">−</button>
       <button onclick="document.getElementById('ovrEditInput').value=parseInt(document.getElementById('ovrEditInput').value||60)" style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text2);font-size:13px;cursor:pointer;">= OVR</button>
-      <button onclick="document.getElementById('ovrEditInput').value=Math.min(99,parseInt(document.getElementById('ovrEditInput').value||60)+1)" style="padding:10px;border-radius:10px;background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.3);color:var(--green);font-size:18px;font-weight:900;cursor:pointer;">+</button>
+      <button onclick="document.getElementById('ovrEditInput').value=Math.min(120,parseInt(document.getElementById('ovrEditInput').value||60)+1)" style="padding:10px;border-radius:10px;background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.3);color:var(--green);font-size:18px;font-weight:900;cursor:pointer;">+</button>
     </div>
     <button class="btn btn-primary" onclick="savePlayerOvr()" style="margin-top:12px;">💾 حفظ OVR</button>
     <button class="btn btn-ghost" onclick="closeModal('ovrEditModal')" style="margin-top:8px;">إلغاء</button>
