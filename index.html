@@ -781,20 +781,55 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
 }
 
 .chat-wrap {
-  height: 330px; overflow-y: auto; padding: 8px;
-  background: rgba(255,255,255,0.02); border-radius: 14px;
-  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+  height: 420px; overflow-y: auto; padding: 14px 10px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0,184,255,0.05), transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(0,232,122,0.05), transparent 40%),
+    rgba(255,255,255,0.015);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.05);
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent;
+  display: flex; flex-direction: column;
 }
+.chat-wrap::-webkit-scrollbar { width: 5px; }
+.chat-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+
+.msg-row { display: flex; align-items: flex-end; gap: 7px; margin-bottom: 10px; max-width: 100%; }
+.msg-row.mine { flex-direction: row-reverse; }
+.msg-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #000;
+  background: linear-gradient(135deg,var(--blue),var(--green));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.msg-row.mine .msg-avatar { visibility: hidden; }
+
 .msg-bubble {
-  padding: 9px 13px; border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  margin-bottom: 7px; max-width: 84%;
+  padding: 8px 12px 7px; border-radius: 16px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.06);
+  max-width: 78%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  position: relative;
+  animation: msgPop 0.18s ease-out;
 }
-.msg-bubble.mine { margin-left: auto; background: rgba(0,232,122,0.1); border: 1px solid rgba(0,232,122,0.2); }
-.msg-user { font-size: 11px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
-.msg-text { font-size: 14px; line-height: 1.5; word-break: break-word; }
-.msg-time { font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 4px; text-align: left; }
-.msg-img { width: 100%; max-width: 220px; border-radius: 10px; margin-top: 6px; display: block; cursor: pointer; }
+@keyframes msgPop { from { opacity:0; transform: translateY(4px) scale(0.98); } to { opacity:1; transform: translateY(0) scale(1); } }
+.msg-row:not(.mine) .msg-bubble { border-bottom-right-radius: 4px; }
+.msg-row.mine .msg-bubble { border-bottom-left-radius: 4px; }
+.msg-bubble.mine {
+  background: linear-gradient(135deg, rgba(0,232,122,0.22), rgba(0,184,255,0.14));
+  border: 1px solid rgba(0,232,122,0.25);
+}
+.msg-user { font-size: 11px; font-weight: 700; color: var(--blue); margin-bottom: 2px; }
+.msg-row.mine .msg-user { display: none; }
+.msg-text { font-size: 14px; line-height: 1.5; word-break: break-word; color: rgba(255,255,255,0.92); }
+.msg-time {
+  font-size: 9.5px; color: rgba(255,255,255,0.35); margin-top: 3px;
+  text-align: left; float: left; margin-left: 6px; margin-top: 2px;
+}
+.msg-bubble::after { content: ''; display: block; clear: both; }
+.msg-img { width: 100%; max-width: 220px; border-radius: 12px; margin-top: 4px; display: block; cursor: pointer; }
 
 /* MANAGER / GOLD MESSAGE */
 .msg-bubble.manager-msg {
@@ -843,24 +878,31 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
   to   { background-position: -200% 0; }
 }
 
-/* Chat input bar */
+/* Chat input bar — floating pill, Telegram-style */
 .chat-input-row {
-  display: flex; gap: 8px; margin-top: 10px; align-items: center;
+  display: flex; gap: 6px; margin-top: 10px; align-items: center;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 26px; padding: 5px 5px 5px 5px;
+}
+.chat-input-row #msgInput {
+  background: transparent !important; border: none !important; box-shadow: none !important;
+  padding: 10px 6px !important;
 }
 .chat-img-btn {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-  display: flex; align-items: center; justify-content: center; font-size: 20px;
-  cursor: pointer; transition: 0.2s;
-}
-.chat-img-btn:active { transform: scale(0.93); }
-.chat-send-btn {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: linear-gradient(90deg,var(--green),var(--blue)); border: none;
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.06); border: none;
   display: flex; align-items: center; justify-content: center; font-size: 18px;
   cursor: pointer; transition: 0.2s;
 }
-.chat-send-btn:active { transform: scale(0.93); }
+.chat-img-btn:active { transform: scale(0.9); }
+.chat-send-btn {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg,var(--green),var(--blue)); border: none;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  cursor: pointer; transition: 0.2s;
+  box-shadow: 0 3px 10px rgba(0,232,122,0.35);
+}
+.chat-send-btn:active { transform: scale(0.9); }
 .chat-img-preview {
   display: none; align-items: center; gap: 8px;
   padding: 8px; border-radius: 10px; background: rgba(0,232,122,0.06);
@@ -891,12 +933,12 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
 
 /* Voice message recording / bubble */
 .chat-voice-btn {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-  display: flex; align-items: center; justify-content: center; font-size: 20px;
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.06); border: none;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
   cursor: pointer; transition: 0.2s;
 }
-.chat-voice-btn:active { transform: scale(0.93); }
+.chat-voice-btn:active { transform: scale(0.9); }
 .chat-voice-btn.recording {
   background: rgba(255,59,85,0.18); border-color: rgba(255,59,85,0.4); color: var(--red);
   animation: voicePulse 1s ease-in-out infinite;
@@ -3328,21 +3370,20 @@ textarea:focus, select:focus {
   box-shadow: 0 0 16px rgba(0,232,122,0.12) !important;
 }
 
-/* --- CHAT BUBBLES: glass variants --- */
+/* --- CHAT BUBBLES: glass variants (kept in sync with Telegram-style tails) --- */
 .msg-bubble {
-  border-radius: 18px !important;
-  background: rgba(255,255,255,0.05) !important;
+  background: rgba(255,255,255,0.06) !important;
   border: 1px solid rgba(255,255,255,0.07) !important;
   backdrop-filter: blur(8px) !important;
 }
 .msg-bubble.mine {
-  background: rgba(0,232,122,0.09) !important;
-  border-color: rgba(0,232,122,0.18) !important;
+  background: linear-gradient(135deg, rgba(0,232,122,0.20), rgba(0,184,255,0.13)) !important;
+  border-color: rgba(0,232,122,0.22) !important;
 }
 
-/* --- CHAT INPUT: floating pill (Image 3) --- */
+/* --- CHAT INPUT: floating pill --- */
 .chat-send-btn, .chat-voice-btn, .chat-img-btn {
-  border-radius: 14px !important;
+  border-radius: 50% !important;
 }
 
 /* --- PROFILE AVATAR: glow ring --- */
@@ -3846,6 +3887,31 @@ textarea:focus, select:focus {
   </div>
 </div>
 
+<!-- EDIT SECTION MODAL -->
+<div class="modal-overlay" id="editSectionModal" onclick="if(event.target===this)closeModal('editSectionModal')">
+  <div class="modal-box">
+    <h2>✏️ تعديل القسم</h2>
+    <input type="hidden" id="editSecIndex">
+    <input id="editSecName" placeholder="اسم القسم">
+    <input id="editSecIcon" placeholder="إيموجي (مثال: 🏆)">
+    <textarea id="editSecContent" placeholder="محتوى القسم..." style="min-height:110px;"></textarea>
+    <button class="btn btn-primary" onclick="saveEditSection()">💾 حفظ التعديلات</button>
+    <button class="btn btn-ghost" onclick="closeModal('editSectionModal')" style="margin-top:7px;">إلغاء</button>
+  </div>
+</div>
+
+<!-- GENERIC CONFIRM MODAL (replaces native confirm() which fails inside webview) -->
+<div class="modal-overlay" id="genConfirmModal" onclick="if(event.target===this)closeModal('genConfirmModal')">
+  <div class="modal-box" style="max-width:340px;text-align:center;">
+    <div id="genConfirmIcon" style="font-size:34px;margin-bottom:8px;">⚠️</div>
+    <div id="genConfirmMsg" style="font-size:14px;line-height:1.7;margin-bottom:18px;color:rgba(255,255,255,0.85);"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('genConfirmModal')">إلغاء</button>
+      <button class="btn btn-danger" style="flex:1;" id="genConfirmYesBtn">تأكيد</button>
+    </div>
+  </div>
+</div>
+
 <!-- MANAGER BANNER -->
 <div id="managerBanner">
   <div class="manager-banner-inner">
@@ -4081,10 +4147,10 @@ function setAppLang(lang){
 }
 window.setAppLang=setAppLang;
 
-let players=[], teams=[], matches=[], videos=[], stories=[], messages=[], live=[], sections=[];
+let players=[], teams=[], matches=[], videos=[], stories=[], messages=[], live=[], sections=[], trash=[];
 let users=[], playerRequests=[], codes=[], notifications=[];
 let voteAward={title:'', nominees:[]}; // {title, nominees:[{id,name,img,votes:[usernames]}]}
-let appSettings = { bg:'', bgType:'color', anthem:'', anthemName:'', privateMembers:false };
+let appSettings = { bg:'', bgType:'color', anthem:'', anthemName:'', privateMembers:false, hiddenBuiltins:{} };
 let bulletin     = { mediaType:'', mediaSrc:'', caption:'', time:'', active:false };
 let homeEmbed    = { url:'', iframeW:380, iframeH:900, selX:0, selY:0, selW:380, selH:200, active:false };
 let streams      = []; // MOD FREE WORLD CUP streams
@@ -4531,6 +4597,7 @@ function save() {
   fbSave('messages', messages);
   fbSave('live',     live);
   fbSave('sections', sections);
+  fbSave('trash', trash);
   fbSave('appSettings', appSettings);
   fbSave('bulletin', bulletin);
   fbSave('homeEmbed', homeEmbed);
@@ -4555,6 +4622,7 @@ function setupListeners() {
   fbLoad('messages', v=>{ messages=v; if(currentPage==='chat')    chatPage(); });
   fbLoad('live',     v=>{ live=v;     if(currentPage==='live')    livePage(); if(currentPage==='home') homePage(); });
   fbLoad('sections', v=>{ sections=v; if(currentPage==='more')    morePage(); });
+  fbLoad('trash',    v=>{ trash=v; purgeOldTrash(); if(currentPage==='trash') trashPage(); });
   fbLoad('streams',  v=>{ streams=v;  if(currentPage==='worldcup') worldCupPage(); });
   fbLoad('tiktoks',  v=>{ tiktoks=v;  if(currentPage==='tiktok')  tiktokPage(); });
   fbLoad('m3uChannels', v=>{ m3uChannels=v; if(currentPage==='m3u') m3uPage(); });
@@ -4621,7 +4689,7 @@ function setupListeners() {
     tacRankings = (val&&typeof val==='object') ? val : {};
     if(currentPage==='leader') leaderPage();
   });
-  fbLoad('appSettings', v=>{ if(v&&!Array.isArray(v)){ appSettings=v; applyAppSettings(); } });
+  fbLoad('appSettings', v=>{ if(v&&!Array.isArray(v)){ appSettings=v; appSettings.hiddenBuiltins=appSettings.hiddenBuiltins||{}; applyAppSettings(); } });
   fbLoad('homeEmbed', v=>{ if(v&&!Array.isArray(v)){ homeEmbed=v; if(currentPage==='home') homePage(); } });
   get(ref(db,'homeEmbed')).then(snap=>{
     const val=snap.val();
@@ -4678,7 +4746,7 @@ function runRealSplashLoad(){
   const pctEl=document.getElementById('splashPct');
   const fillEl=document.getElementById('splashFill');
   const labelEl=document.getElementById('splashLoadingLabel');
-  const keys=['players','teams','matches','videos','stories','live','users','appSettings','homeEmbed','bulletin','sections'];
+  const keys=['players','teams','matches','videos','stories','live','users','appSettings','homeEmbed','bulletin','sections','trash'];
   const phases=['جاري تحميل البيانات...','تحميل اللاعبين...','تحميل الفرق...','تحميل المباريات...','تحميل الفيديوهات...','مزامنة القصص...','الاتصال بالمباشر...','تحميل الحسابات...','تجهيز الإعدادات...','تحميل الأخبار...','تحميل الأقسام...','اللمسات الأخيرة...'];
   const total=keys.length;
   let done=0;
@@ -4738,6 +4806,7 @@ function runRealSplashLoad(){
         case 'live': live=asArray; break;
         case 'users': users=asArray; break;
         case 'sections': sections=asArray; break;
+        case 'trash': trash=asArray; break;
         case 'appSettings': if(val&&typeof val==='object'&&!Array.isArray(val)) appSettings=val; break;
         case 'homeEmbed': if(val&&typeof val==='object'&&!Array.isArray(val)) homeEmbed=val; break;
         case 'bulletin': if(val&&typeof val==='object'&&!Array.isArray(val)) bulletin=val; break;
@@ -4850,6 +4919,15 @@ function manualRefresh(){
   setTimeout(()=>{ location.reload(); }, 250);
 }
 window.manualRefresh=manualRefresh;
+function toggleFinCard(){
+  const el=document.getElementById('finCardWrap');
+  const btn=document.getElementById('finToggleBtn');
+  if(!el) return;
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'block';
+  if(btn) btn.textContent=isOpen?'💎 المحفظة ▾':'✖️ إخفاء ▲';
+}
+window.toggleFinCard=toggleFinCard;
 function showPage(page, btn){
   currentPage=page;
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
@@ -4895,12 +4973,144 @@ function showPage(page, btn){
 function homePage(){
   const goals=matches.reduce((a,m)=>a+parseInt(m.ga||0)+parseInt(m.gb||0),0);
   const activeMode=getActiveMode();
+  const _finU=getUserData(currentUser);
+  const _finTopPlayers=players.slice().sort((a,b)=>(b.ovr||0)-(a.ovr||0)).slice(0,5);
+  const _finLastMatch=matches.length>0?matches[matches.length-1]:null;
   document.getElementById('app').innerHTML=`
+  <style>
+    .fin-card {
+      margin: 12px 14px 0; padding: 18px 16px 14px; border-radius: 28px;
+      background: linear-gradient(150deg, #0a1230 0%, #13246b 45%, #2f5fd6 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 20px 50px rgba(10,20,60,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative; overflow: hidden;
+    }
+    .fin-card::before {
+      content:''; position:absolute; width:180px; height:180px; border-radius:50%;
+      background: radial-gradient(circle, rgba(0,232,122,0.35), transparent 70%);
+      top:-70px; left:-50px; filter: blur(10px); pointer-events:none;
+    }
+    .fin-card::after {
+      content:''; position:absolute; width:200px; height:200px; border-radius:50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%);
+      bottom:-90px; right:-60px; filter: blur(10px); pointer-events:none;
+    }
+    .fin-top { display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; }
+    .fin-user { display:flex; align-items:center; gap:8px; }
+    .fin-avatar {
+      width:30px; height:30px; border-radius:50%; overflow:hidden; flex-shrink:0;
+      background: linear-gradient(135deg,var(--green),var(--blue));
+      display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900;
+      border: 1.5px solid rgba(255,255,255,0.4);
+    }
+    .fin-avatar img { width:100%; height:100%; object-fit:cover; }
+    .fin-username { font-size:13px; font-weight:800; color:#fff; }
+    .fin-info-btn {
+      width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.18); color:#fff; font-size:11px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .fin-balance-pill {
+      display:inline-block; margin:16px auto 0; padding:6px 16px; border-radius:20px;
+      background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.16);
+      font-size:10.5px; font-weight:800; color:rgba(255,255,255,0.85); letter-spacing:0.5px;
+      position:relative; z-index:1;
+    }
+    .fin-balance-wrap { text-align:center; position:relative; z-index:1; }
+    .fin-balance-amount { font-size:34px; font-weight:900; color:#fff; margin-top:8px; letter-spacing:0.5px; }
+    .fin-avatars-row {
+      display:flex; justify-content:center; gap:10px; margin-top:18px; position:relative; z-index:1;
+    }
+    .fin-avatar-chip {
+      width:42px; height:42px; border-radius:50%; overflow:hidden; cursor:pointer;
+      background: linear-gradient(135deg,#2f5fd6,#8b5cf6);
+      border:2px solid rgba(255,255,255,0.35); display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+    }
+    .fin-avatar-chip img { width:100%; height:100%; object-fit:cover; }
+    .fin-txn-panel {
+      margin-top:16px; padding:12px 14px; border-radius:18px; position:relative; z-index:1;
+      background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+    }
+    .fin-txn-head { display:flex; justify-content:space-between; align-items:center; font-size:11px; }
+    .fin-txn-head span:first-child { color:rgba(255,255,255,0.55); font-weight:700; }
+    .fin-txn-viewall { color:#fff; font-weight:800; text-decoration:underline; cursor:pointer; }
+    .fin-txn-row { display:flex; align-items:center; gap:10px; margin-top:10px; }
+    .fin-txn-icon {
+      width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.14);
+      display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+    }
+    .fin-txn-info { flex:1; min-width:0; }
+    .fin-txn-title { font-size:12.5px; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .fin-txn-date { font-size:10px; color:rgba(255,255,255,0.5); margin-top:2px; }
+    .fin-txn-amount { font-size:11px; font-weight:800; color:#fff; white-space:nowrap; }
+    .fin-txn-empty { text-align:center; padding:10px 0; font-size:11.5px; color:rgba(255,255,255,0.45); }
+    .fin-actions-row { display:flex; gap:8px; margin-top:14px; position:relative; z-index:1; }
+    .fin-action-btn {
+      flex:1; padding:12px 0; border-radius:16px; border:none; cursor:pointer;
+      background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.15);
+      color:#fff; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:5px;
+      font-family:'Inter',sans-serif;
+    }
+    .fin-action-btn:active { transform: scale(0.95); }
+    .fin-action-btn.wide { flex:2; font-size:12px; }
+    .fin-action-btn.primary {
+      background: linear-gradient(90deg,var(--green),var(--blue)); color:#00170d;
+      box-shadow: 0 6px 20px rgba(0,232,122,0.35);
+    }
+  </style>
   <div class="page-anim">
     <div class="hero">
-      <div class="hero-badge">${activeMode.heroBadge||'⭐ SEASON 2026'}</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+        <div class="hero-badge" style="margin-bottom:0;">${activeMode.heroBadge||'⭐ SEASON 2026'}</div>
+        <button id="finToggleBtn" onclick="toggleFinCard()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(0,184,255,0.12);border:1px solid rgba(0,184,255,0.3);color:var(--blue);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;">💎 المحفظة ▾</button>
+      </div>
       <h2>${activeMode.heroTitle||'7TH LEGA OMEGA EMPEROR'}</h2>
       <p>${t('home_welcome')} ${currentUser} 🔥</p>
+    </div>
+    <div id="finCardWrap" style="display:none;">
+    <div class="fin-card">
+      <div class="fin-top">
+        <div class="fin-user">
+          <div class="fin-avatar">${_finU.photo?`<img src="${_finU.photo}">`:currentUser.slice(0,1).toUpperCase()}</div>
+          <span class="fin-username">${currentUser}</span>
+        </div>
+        <button class="fin-info-btn" onclick="showProfile('${currentUser.replace(/'/g,"\\'")}')">ℹ️</button>
+      </div>
+      <div class="fin-balance-wrap">
+        <div class="fin-balance-pill">رصيدك من الجواهر</div>
+        <div class="fin-balance-amount">💎 ${_finU.gems||0}</div>
+      </div>
+      ${_finTopPlayers.length>0?`<div class="fin-avatars-row">
+        ${_finTopPlayers.map(p=>`<div class="fin-avatar-chip" onclick="showProfile('${p.name.replace(/'/g,"\\'")}')">${p.img?`<img src="${p.img}">`:'⚽'}</div>`).join('')}
+      </div>`:''}
+      <div class="fin-txn-panel">
+        <div class="fin-txn-head">
+          <span>آخر مباراة</span>
+          <span class="fin-txn-viewall" onclick="showPage('matches')">عرض الكل</span>
+        </div>
+        ${_finLastMatch?(()=>{
+          const ga=parseInt(_finLastMatch.ga||0), gb=parseInt(_finLastMatch.gb||0);
+          const draw=ga===gb, aWon=ga>gb;
+          const resLabel=draw?'تعادل':aWon?`فوز ${_finLastMatch.a}`:`فوز ${_finLastMatch.b}`;
+          return `<div class="fin-txn-row">
+            <div class="fin-txn-icon">⚽</div>
+            <div class="fin-txn-info">
+              <div class="fin-txn-title">${_finLastMatch.a} ${ga} - ${gb} ${_finLastMatch.b}</div>
+              <div class="fin-txn-date">📅 ${_finLastMatch.date||'—'}</div>
+            </div>
+            <div class="fin-txn-amount">${resLabel}</div>
+          </div>`;
+        })():`<div class="fin-txn-empty">لا توجد مباريات بعد</div>`}
+      </div>
+      <div class="fin-actions-row">
+        <button class="fin-action-btn" onclick="showProfile('${currentUser.replace(/'/g,"\\'")}')">⚙️</button>
+        <button class="fin-action-btn" onclick="showPage('leader')">🏆</button>
+        <button class="fin-action-btn wide" onclick="openGemShop()">المتجر 🛍️</button>
+        <button class="fin-action-btn wide primary" onclick="openGemShop()">الجواهر 💎</button>
+      </div>
+    </div>
     </div>
     ${renderModeBanners()}
     <div class="stats-row">
@@ -4967,8 +5177,8 @@ function homePage(){
             </div>
           </div>
           ${(m.scorersA&&m.scorersA.length>0)||(m.scorersB&&m.scorersB.length>0)?`<div style="border-top:1px solid rgba(255,255,255,0.06);padding:8px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div>${(m.scorersA||[]).map(s=>{const nm=typeof s==='object'?s.player:s;const mn=typeof s==='object'?s.min:'';return `<div style="font-size:11px;color:var(--green);font-weight:700;">⚽ ${mn?mn+"' ":''}${nm}</div>`;}).join('')}</div>
-            <div style="border-right:1px solid rgba(255,255,255,0.06);padding-right:8px;">${(m.scorersB||[]).map(s=>{const nm=typeof s==='object'?s.player:s;const mn=typeof s==='object'?s.min:'';return `<div style="font-size:11px;color:var(--green);font-weight:700;">⚽ ${mn?mn+"' ":''}${nm}</div>`;}).join('')}</div>
+            <div>${groupScorersByPlayer(m.scorersA).map(g=>`<div style="font-size:11px;color:var(--green);font-weight:700;">⚽ ${g.name} ${formatScorerMins(g.mins)}</div>`).join('')}</div>
+            <div style="border-right:1px solid rgba(255,255,255,0.06);padding-right:8px;">${groupScorersByPlayer(m.scorersB).map(g=>`<div style="font-size:11px;color:var(--green);font-weight:700;">⚽ ${g.name} ${formatScorerMins(g.mins)}</div>`).join('')}</div>
           </div>`:''}
           ${(m.cards&&m.cards.length>0)?`<div style="border-top:1px solid rgba(255,255,255,0.06);padding:6px 12px;display:flex;flex-wrap:wrap;gap:5px;">
             ${m.cards.map(c=>`<span style="font-size:10px;font-weight:700;background:${c.type==='red'?'rgba(255,59,85,0.1)':'rgba(255,214,10,0.08)'};border:1px solid ${c.type==='red'?'rgba(255,59,85,0.3)':'rgba(255,214,10,0.25)'};border-radius:6px;padding:2px 6px;color:${c.type==='red'?'var(--red)':'#ffd60a'};">${c.type==='red'?'🟥':'🟨'}${c.min?c.min+"' ":''}${c.player}</span>`).join('')}
@@ -5782,8 +5992,8 @@ function matchesPage(){
 
   document.getElementById('app').innerHTML=`
   <div class="page-anim">
-    ${isAdmin?`<div class="card">
-      <div class="section-title">➕ إضافة مباراة</div>
+    ${isAdmin?`<div class="card" id="matchFormCard">
+      <div class="section-title" id="matchFormTitle">➕ إضافة مباراة</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <input id="mA" placeholder="الفريق الأول">
         <input id="mB" placeholder="الفريق الثاني">
@@ -5861,7 +6071,8 @@ function matchesPage(){
           <input id="mPossB" type="number" min="0" max="100" placeholder="مثال: 40">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="addMatch()">➕ إضافة المباراة</button>
+      <button class="btn btn-primary" id="matchFormSubmitBtn" onclick="addMatch()">➕ إضافة المباراة</button>
+      <button class="btn btn-ghost" id="matchEditCancelBtn" style="display:none;" onclick="cancelEditMatch()">❌ إلغاء التعديل</button>
     </div>`:''}
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
@@ -5880,9 +6091,12 @@ function matchesPage(){
           const resultColor=draw?'var(--blue)':aWon?'var(--green)':'var(--red)';
           return `<div class="match-card" style="padding:0;overflow:hidden;border:1px solid ${scoreBorder};margin-top:12px;">
             <!-- Header -->
-            <div style="background:${scoreColor};padding:8px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="background:${scoreColor};padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
               <div style="font-size:10px;font-weight:800;color:${resultColor};">● ${result}</div>
-              <div style="font-size:10px;color:var(--text2);">📅 ${m.date||'—'}</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="font-size:10px;color:var(--text2);">📅 ${m.date||'—'}</div>
+                ${isAdmin?`<button onclick="editMatch(${i})" title="تعديل المباراة" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;flex-shrink:0;">✏️</button>`:''}
+              </div>
             </div>
             <!-- Teams & Score -->
             <div style="padding:14px 12px 10px;display:flex;align-items:center;gap:8px;">
@@ -5913,17 +6127,17 @@ function matchesPage(){
               <div>
                 <div style="font-size:9px;font-weight:800;color:var(--text2);margin-bottom:4px;letter-spacing:1px;">الهدافون ⚽</div>
                 ${(()=>{
-                  const entries = m.scorersA && m.scorersA.length>0 && typeof m.scorersA[0]==='object' ? m.scorersA : (m.scorersA||[]).map(s=>({player:s,min:''}));
-                  if(entries.length===0) return `<div style="opacity:0.35;font-size:11px;">⚽ لا توجد أهداف</div>`;
-                  return entries.map(s=>{const pl=players.find(p=>p.name===(s.player||s));return `<div style="display:flex;align-items:center;gap:4px;margin-top:3px;">${pl&&pl.img?`<img src="${pl.img}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;">`:`<span style="font-size:10px;">⚽</span>`}<span style="font-size:11.5px;font-weight:700;">${s.min?`${s.min}'`:''} ${s.player||s}</span></div>`;}).join('');
+                  const grouped = groupScorersByPlayer(m.scorersA);
+                  if(grouped.length===0) return `<div style="opacity:0.35;font-size:11px;">⚽ لا توجد أهداف</div>`;
+                  return grouped.map(g=>{const pl=players.find(p=>p.name===g.name);return `<div style="display:flex;align-items:center;gap:4px;margin-top:3px;">${pl&&pl.img?`<img src="${pl.img}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;">`:`<span style="font-size:10px;">⚽</span>`}<span style="font-size:11.5px;font-weight:700;">${g.name} ${formatScorerMins(g.mins)}</span></div>`;}).join('');
                 })()}
               </div>
               <div style="border-right:1px solid rgba(255,255,255,0.07);padding-right:8px;">
                 <div style="font-size:9px;font-weight:800;color:var(--text2);margin-bottom:4px;letter-spacing:1px;">الهدافون ⚽</div>
                 ${(()=>{
-                  const entries = m.scorersB && m.scorersB.length>0 && typeof m.scorersB[0]==='object' ? m.scorersB : (m.scorersB||[]).map(s=>({player:s,min:''}));
-                  if(entries.length===0) return `<div style="opacity:0.35;font-size:11px;">⚽ لا توجد أهداف</div>`;
-                  return entries.map(s=>{const pl=players.find(p=>p.name===(s.player||s));return `<div style="display:flex;align-items:center;gap:4px;margin-top:3px;">${pl&&pl.img?`<img src="${pl.img}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;">`:`<span style="font-size:10px;">⚽</span>`}<span style="font-size:11.5px;font-weight:700;">${s.min?`${s.min}'`:''} ${s.player||s}</span></div>`;}).join('');
+                  const grouped = groupScorersByPlayer(m.scorersB);
+                  if(grouped.length===0) return `<div style="opacity:0.35;font-size:11px;">⚽ لا توجد أهداف</div>`;
+                  return grouped.map(g=>{const pl=players.find(p=>p.name===g.name);return `<div style="display:flex;align-items:center;gap:4px;margin-top:3px;">${pl&&pl.img?`<img src="${pl.img}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;">`:`<span style="font-size:10px;">⚽</span>`}<span style="font-size:11.5px;font-weight:700;">${g.name} ${formatScorerMins(g.mins)}</span></div>`;}).join('');
                 })()}
               </div>
             </div>
@@ -6008,6 +6222,7 @@ function matchesPage(){
 }
 // ========= GOAL / CARD ENTRY HELPERS =========
 let _goalsA = [], _goalsB = [], _cards = [], _assists = [];
+let _editingMatchIndex = -1;
 
 function addGoalEntry(side){
   const sel=document.getElementById('goalA_player'), minEl=document.getElementById('goalA_min');
@@ -6166,9 +6381,77 @@ function selectMatchPlayer(value, label){
 window.selectMatchPlayer=selectMatchPlayer;
 // ========= END MATCH PLAYER PICKER =========
 
+// Undo the stat effects (goals/assists/cards/clean sheets) that a stored match
+// previously applied to players, used before re-applying edited values.
+function reverseMatchStats(m){
+  if(!m) return;
+  (m.scorersA||[]).forEach(s=>{
+    const name=typeof s==='object'?s.player:s;
+    const pl=players.find(p=>p.name===name);
+    if(pl) pl.goals=Math.max(0,(pl.goals||0)-1);
+  });
+  (m.scorersB||[]).forEach(s=>{
+    const name=typeof s==='object'?s.player:s;
+    const pl=players.find(p=>p.name===name);
+    if(pl) pl.goals=Math.max(0,(pl.goals||0)-1);
+  });
+  (m.assists||[]).forEach(a=>{
+    const pl=players.find(p=>p.name===a.player);
+    if(pl) pl.assists=Math.max(0,(pl.assists||0)-1);
+  });
+  (m.cards||[]).forEach(c=>{
+    const pl=players.find(p=>p.name===c.player);
+    if(pl){
+      if(c.type==='yellow') pl.yellowCards=Math.max(0,(pl.yellowCards||0)-1);
+      else pl.redCards=Math.max(0,(pl.redCards||0)-1);
+    }
+  });
+  const ga=parseInt(m.ga||0), gb=parseInt(m.gb||0);
+  if(ga===0 && m.cleanB){ const pl=players.find(p=>p.name===m.cleanB); if(pl) pl.cleanSheets=Math.max(0,(pl.cleanSheets||0)-1); }
+  if(gb===0 && m.cleanA){ const pl=players.find(p=>p.name===m.cleanA); if(pl) pl.cleanSheets=Math.max(0,(pl.cleanSheets||0)-1); }
+}
+// Populate the add-match form with an existing match's data so the admin can
+// edit the score, teams, date, scorers, cards, assists, clean sheets & possession.
+function editMatch(i){
+  const m=matches[i];
+  if(!m) return;
+  _editingMatchIndex=i;
+  document.getElementById('mA').value=m.a||'';
+  document.getElementById('mB').value=m.b||'';
+  document.getElementById('mGA').value=m.ga||0;
+  document.getElementById('mGB').value=m.gb||0;
+  document.getElementById('mDate').value=m.date||'';
+  _goalsA=(m.scorersA||[]).map(s=>typeof s==='object'?{player:s.player,min:s.min}:{player:s,min:''});
+  _goalsB=(m.scorersB||[]).map(s=>typeof s==='object'?{player:s.player,min:s.min}:{player:s,min:''});
+  _assists=(m.assists||[]).map(a=>({player:a.player}));
+  _cards=(m.cards||[]).map(c=>({player:c.player,min:c.min,type:c.type}));
+  renderGoalsList('A'); renderGoalsList('B'); renderAssistsList(); renderCardsList();
+  const setPicker=(hiddenId,btnId,val)=>{
+    const h=document.getElementById(hiddenId), btn=document.getElementById(btnId);
+    if(h) h.value=val||'';
+    if(btn){ btn.textContent=val||'— لا أحد —'; btn.style.color=val?'white':'rgba(255,255,255,0.5)'; }
+  };
+  setPicker('mCleanA','mCleanABtn',m.cleanA);
+  setPicker('mCleanB','mCleanBBtn',m.cleanB);
+  document.getElementById('mPossA').value=m.possA||'';
+  document.getElementById('mPossB').value=m.possB||'';
+  const titleEl=document.getElementById('matchFormTitle'); if(titleEl) titleEl.textContent='✏️ تعديل المباراة';
+  const submitBtn=document.getElementById('matchFormSubmitBtn'); if(submitBtn) submitBtn.textContent='💾 حفظ التعديلات';
+  const cancelBtn=document.getElementById('matchEditCancelBtn'); if(cancelBtn) cancelBtn.style.display='block';
+  const card=document.getElementById('matchFormCard'); if(card) card.scrollIntoView({behavior:'smooth',block:'start'});
+  toast('✏️ عدّل البيانات ثم اضغط حفظ التعديلات');
+}
+function cancelEditMatch(){
+  _editingMatchIndex=-1;
+  _goalsA=[]; _goalsB=[]; _cards=[]; _assists=[];
+  matchesPage();
+}
 function addMatch(){
   const a=document.getElementById('mA').value.trim(),b=document.getElementById('mB').value.trim();
   if(!a||!b) return toast('⚠️ أدخل اسم الفريقين');
+  const isEdit = _editingMatchIndex>=0;
+  // When editing, first undo the old match's effect on player stats
+  if(isEdit) reverseMatchStats(matches[_editingMatchIndex]);
   // Use the goal entries arrays (now with minute info)
   const scorersA = _goalsA.map(g=>g.player);
   const scorersB = _goalsB.map(g=>g.player);
@@ -6204,27 +6487,40 @@ function addMatch(){
   // Update clean sheet count
   if(ga===0 && cleanB){ const pl=players.find(p=>p.name===cleanB); if(pl) pl.cleanSheets=(pl.cleanSheets||0)+1; }
   if(gb===0 && cleanA){ const pl=players.find(p=>p.name===cleanA); if(pl) pl.cleanSheets=(pl.cleanSheets||0)+1; }
-  matches.push({id:Date.now(),a,b,date:document.getElementById('mDate').value,ga,gb,
+  const matchData = {
+    a,b,date:document.getElementById('mDate').value,ga,gb,
     scorersA: _goalsA.map(g=>({player:g.player,min:g.min})),
     scorersB: _goalsB.map(g=>({player:g.player,min:g.min})),
     cleanA,cleanB,possA,possB,
     assists: _assists.map(a=>({player:a.player})),
     cards: _cards.map(c=>({player:c.player,min:c.min,type:c.type}))
-  });
+  };
+  if(isEdit){
+    matches[_editingMatchIndex] = {...matches[_editingMatchIndex], ...matchData};
+    _editingMatchIndex=-1;
+  } else {
+    matches.push({id:Date.now(), ...matchData});
+  }
   // reset temp arrays
   _goalsA=[]; _goalsB=[]; _cards=[]; _assists=[];
-  save();toast('✅ تمت إضافة المباراة');
-  // 🤖 Auto-generate AI news article
-  generateMatchNews({a,b,ga,gb,
-    scorersA: matches[matches.length-1].scorersA,
-    scorersB: matches[matches.length-1].scorersB,
-    possA,possB, date:document.getElementById('mDate').value,
-    cleanA,cleanB,
-    cards: matches[matches.length-1].cards
-  });
+  save();
+  toast(isEdit?'✅ تم تحديث المباراة':'✅ تمت إضافة المباراة');
+  // 🤖 Auto-generate AI news article (new matches only)
+  if(!isEdit){
+    generateMatchNews({a,b,ga,gb,
+      scorersA: matchData.scorersA,
+      scorersB: matchData.scorersB,
+      possA,possB, date:matchData.date,
+      cleanA,cleanB,
+      cards: matchData.cards
+    });
+  }
   matchesPage();
 }
-function deleteMatch(i){matches.splice(i,1);save();matchesPage();}
+function deleteMatch(i){
+  if(_editingMatchIndex===i) _editingMatchIndex=-1;
+  matches.splice(i,1);save();matchesPage();
+}
 
 // ===========================
 // 🤖 AI NEWS GENERATION
@@ -6772,13 +7068,17 @@ function chatPage(){
           msgs.map((m,i)=>{
             const isMine=m.user===currentUser;
             const isMgr=m.isManager;
-            return `<div class="msg-bubble ${isMine?'mine':''} ${isMgr?'manager-msg':''}" style="position:relative;">
-              ${isAdmin?`<button class="msg-delete-btn" onclick="deleteMsg(${i})" title="حذف الرسالة" style="position:absolute;top:4px;left:4px;background:rgba(255,59,85,0.18);border:none;color:var(--red);border-radius:8px;width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;">🗑️</button>`:''}
-              <div class="msg-user">${isMgr?`<span class="manager-crown">👑</span> `:''}${userNameTag(m.user)}${isMgr?`<span class="manager-tag">MANAGER</span>`:''}</div>
-              ${m.text?`<div class="msg-text">${m.text}</div>`:''}
-              ${m.img?`<img class="msg-img" src="${m.img}" onclick="this.style.maxWidth=this.style.maxWidth==='100%'?'220px':'100%'}">`:''}
-              ${m.voice?`<div class="msg-voice"><audio controls src="${m.voice}"></audio></div>`:''}
-              <div class="msg-time">${m.time}</div>
+            const initial=(m.user||'?')[0]?.toUpperCase()||'?';
+            return `<div class="msg-row ${isMine?'mine':''}">
+              <div class="msg-avatar">${isMgr?'👑':initial}</div>
+              <div class="msg-bubble ${isMine?'mine':''} ${isMgr?'manager-msg':''}" style="position:relative;">
+                ${isAdmin?`<button class="msg-delete-btn" onclick="deleteMsg(${i})" title="حذف الرسالة" style="position:absolute;top:4px;left:4px;background:rgba(255,59,85,0.18);border:none;color:var(--red);border-radius:8px;width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;">🗑️</button>`:''}
+                <div class="msg-user">${isMgr?`<span class="manager-crown">👑</span> `:''}${userNameTag(m.user)}${isMgr?`<span class="manager-tag">MANAGER</span>`:''}</div>
+                ${m.text?`<div class="msg-text">${m.text}</div>`:''}
+                ${m.img?`<img class="msg-img" src="${m.img}" onclick="this.style.maxWidth=this.style.maxWidth==='100%'?'220px':'100%'}">`:''}
+                ${m.voice?`<div class="msg-voice"><audio controls src="${m.voice}"></audio></div>`:''}
+                <div class="msg-time">${m.time}</div>
+              </div>
             </div>`;
           }).join('')}
       </div>
@@ -6995,16 +7295,27 @@ function sendMsg(){
   chatPage();
 }
 
-// حذف رسالة واحدة (للمانجر فقط)
+// حذف رسالة واحدة (للمانجر فقط) — تنتقل إلى سلة المهملات
 function deleteMsg(index){
   if(!isAdmin) return;
-  if(!confirm('حذف هذه الرسالة؟')) return;
-  const list = roomMessages[currentRoom]||[];
-  list.splice(index,1);
-  roomMessages[currentRoom]=list;
-  set(ref(db,'chatRooms/'+currentRoom), list);
-  chatPage();
-  toast('🗑️ تم حذف الرسالة');
+  askConfirm('حذف هذه الرسالة؟ ستنتقل إلى سلة المهملات لمدة 5 أيام قبل حذفها نهائياً.', ()=>{
+    const list = roomMessages[currentRoom]||[];
+    const msg = list[index];
+    if(!msg) return;
+    list.splice(index,1);
+    roomMessages[currentRoom]=list;
+    if(msg){
+      trash.push({ id:Date.now()+'_'+Math.random().toString(36).slice(2,8), type:'message', roomId:currentRoom, data:msg, deletedAt:Date.now(), deletedBy:currentUser||'مانجر' });
+      fbSave('trash', trash);
+    }
+    set(ref(db,'chatRooms/'+currentRoom), list).then(()=>{
+      chatPage();
+      toast('🗑️ تم نقل الرسالة إلى سلة المهملات');
+    }).catch(err=>{
+      console.error('deleteMsg failed', err);
+      toast('⚠️ فشل حذف الرسالة: '+(err&&err.message?err.message:'خطأ غير معروف'));
+    });
+  });
 }
 
 // Setup room listeners once
@@ -7119,29 +7430,29 @@ function morePage(){
     <div class="card">
       <div class="section-title">${t('more_title')}</div>
       <div class="more-grid">
-        <button class="more-btn gold" style="background:linear-gradient(135deg,rgba(255,214,10,0.12),rgba(255,107,53,0.08));border-color:rgba(255,214,10,0.3);color:#ffd60a;" onclick="showPage('hof')"><span class="mico">🏆</span>${t('more_hof')}</button>
-        <button class="more-btn" style="background:linear-gradient(135deg,rgba(0,184,255,0.1),rgba(139,92,246,0.07));border-color:rgba(0,184,255,0.25);color:var(--blue);" onclick="showPage('stats')"><span class="mico">📊</span>${t('more_stats')}</button>
-        <button class="more-btn" style="background:linear-gradient(135deg,rgba(0,232,122,0.08),rgba(0,184,255,0.05));border-color:rgba(0,232,122,0.2);color:var(--green);" onclick="showPage('news')"><span class="mico">📰</span>${t('more_news')}</button>
-        <button class="more-btn" style="background:linear-gradient(135deg,rgba(255,214,10,0.08),rgba(255,107,53,0.06));border-color:rgba(255,214,10,0.2);color:var(--gold);" onclick="showPage('achievements')"><span class="mico">🏅</span>${t('more_achievements')}</button>
-        <button class="more-btn green" onclick="showPage('leader')"><span class="mico">📊</span>${t('more_leaderboard')}</button>
-        <button class="more-btn red"   onclick="showPage('live')"><span class="mico">🔴</span>${t('more_live')}</button>
-        <button class="more-btn blue"  onclick="showPage('videos')"><span class="mico">🎬</span>${t('more_videos')}</button>
-        <button class="more-btn"       onclick="showPage('stories')"><span class="mico">📢</span>${t('more_stories')}</button>
-        <button class="more-btn"       onclick="showPage('teams')"><span class="mico">🏟️</span>${t('more_teams')}</button>
-        <button class="more-btn green" onclick="showPage('mybestteam')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(0,232,122,0.12),rgba(0,184,255,0.08));border-color:rgba(0,232,122,0.3);color:var(--green);"><span class="mico">⭐</span>${t('more_bestteam')}</button>
-        <button class="more-btn gold"  onclick="showBulletin()"><span class="mico">📋</span>${t('more_announcements')}</button>
-        <button class="more-btn orange"onclick="showPage('worldcup')"><span class="mico">🏆</span>${t('more_worldcup')}</button>
-        <button class="more-btn purple"onclick="showPage('tiktok')"><span class="mico">🎵</span>${t('more_tiktok')}</button>
-        <button class="more-btn blue" onclick="showPage('m3u')"><span class="mico">📡</span>${t('more_m3u')}</button>
-        <button class="more-btn green" onclick="showPage('codes')"><span class="mico">🎁</span>${t('more_codes')}</button>
-        <button class="more-btn gold" onclick="showPage('vote')"><span class="mico">🗳️</span>${t('more_vot')}</button>
-        <button class="more-btn green" onclick="showPage('penalty')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(0,232,122,0.1),rgba(0,184,255,0.08));border-color:rgba(0,232,122,0.25);"><span class="mico">⚽</span>${t('more_penalty')}</button>
-        <button class="more-btn" onclick="showPage('hockey')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(0,200,255,0.12),rgba(255,59,85,0.06));border-color:rgba(0,200,255,0.3);color:#00d4ff;"><span class="mico">🏒</span>${t('more_hockey')}</button>
-        <button class="more-btn" onclick="showPage('penalty1v1')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(0,184,255,0.08));border-color:rgba(168,85,247,0.4);color:#c084fc;"><span class="mico">💎</span>${t('more_penalty1v1')}</button>
-        <button class="more-btn blue"  onclick="showPage('notifications')" style="position:relative;">
+        ${wrapBuiltin('hof', `<button class="more-btn gold" style="background:linear-gradient(135deg,rgba(255,214,10,0.12),rgba(255,107,53,0.08));border-color:rgba(255,214,10,0.3);color:#ffd60a;" onclick="showPage('hof')"><span class="mico">🏆</span>${t('more_hof')}</button>`)}
+        ${wrapBuiltin('stats', `<button class="more-btn" style="background:linear-gradient(135deg,rgba(0,184,255,0.1),rgba(139,92,246,0.07));border-color:rgba(0,184,255,0.25);color:var(--blue);" onclick="showPage('stats')"><span class="mico">📊</span>${t('more_stats')}</button>`)}
+        ${wrapBuiltin('news', `<button class="more-btn" style="background:linear-gradient(135deg,rgba(0,232,122,0.08),rgba(0,184,255,0.05));border-color:rgba(0,232,122,0.2);color:var(--green);" onclick="showPage('news')"><span class="mico">📰</span>${t('more_news')}</button>`)}
+        ${wrapBuiltin('achievements', `<button class="more-btn" style="background:linear-gradient(135deg,rgba(255,214,10,0.08),rgba(255,107,53,0.06));border-color:rgba(255,214,10,0.2);color:var(--gold);" onclick="showPage('achievements')"><span class="mico">🏅</span>${t('more_achievements')}</button>`)}
+        ${wrapBuiltin('leader', `<button class="more-btn green" onclick="showPage('leader')"><span class="mico">📊</span>${t('more_leaderboard')}</button>`)}
+        ${wrapBuiltin('live', `<button class="more-btn red"   onclick="showPage('live')"><span class="mico">🔴</span>${t('more_live')}</button>`)}
+        ${wrapBuiltin('videos', `<button class="more-btn blue"  onclick="showPage('videos')"><span class="mico">🎬</span>${t('more_videos')}</button>`)}
+        ${wrapBuiltin('stories', `<button class="more-btn"       onclick="showPage('stories')"><span class="mico">📢</span>${t('more_stories')}</button>`)}
+        ${wrapBuiltin('teams', `<button class="more-btn"       onclick="showPage('teams')"><span class="mico">🏟️</span>${t('more_teams')}</button>`)}
+        ${wrapBuiltin('mybestteam', `<button class="more-btn green" onclick="showPage('mybestteam')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(0,232,122,0.12),rgba(0,184,255,0.08));border-color:rgba(0,232,122,0.3);color:var(--green);"><span class="mico">⭐</span>${t('more_bestteam')}</button>`)}
+        ${wrapBuiltin('announcements', `<button class="more-btn gold"  onclick="showBulletin()"><span class="mico">📋</span>${t('more_announcements')}</button>`)}
+        ${wrapBuiltin('worldcup', `<button class="more-btn orange"onclick="showPage('worldcup')"><span class="mico">🏆</span>${t('more_worldcup')}</button>`)}
+        ${wrapBuiltin('tiktok', `<button class="more-btn purple"onclick="showPage('tiktok')"><span class="mico">🎵</span>${t('more_tiktok')}</button>`)}
+        ${wrapBuiltin('m3u', `<button class="more-btn blue" onclick="showPage('m3u')"><span class="mico">📡</span>${t('more_m3u')}</button>`)}
+        ${wrapBuiltin('codes', `<button class="more-btn green" onclick="showPage('codes')"><span class="mico">🎁</span>${t('more_codes')}</button>`)}
+        ${wrapBuiltin('vote', `<button class="more-btn gold" onclick="showPage('vote')"><span class="mico">🗳️</span>${t('more_vot')}</button>`)}
+        ${wrapBuiltin('penalty', `<button class="more-btn green" onclick="showPage('penalty')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(0,232,122,0.1),rgba(0,184,255,0.08));border-color:rgba(0,232,122,0.25);"><span class="mico">⚽</span>${t('more_penalty')}</button>`)}
+        ${wrapBuiltin('hockey', `<button class="more-btn" onclick="showPage('hockey')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(0,200,255,0.12),rgba(255,59,85,0.06));border-color:rgba(0,200,255,0.3);color:#00d4ff;"><span class="mico">🏒</span>${t('more_hockey')}</button>`)}
+        ${wrapBuiltin('penalty1v1', `<button class="more-btn" onclick="showPage('penalty1v1')" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(0,184,255,0.08));border-color:rgba(168,85,247,0.4);color:#c084fc;"><span class="mico">💎</span>${t('more_penalty1v1')}</button>`)}
+        ${wrapBuiltin('notifications', `<button class="more-btn blue"  onclick="showPage('notifications')" style="position:relative;">
           <span class="mico">🔔</span>${t('more_notifications')}
           ${notifications.length>0?`<span style="position:absolute;top:6px;right:6px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;">${notifications.length}</span>`:''}
-        </button>
+        </button>`)}
         ${isAdmin?`<button class="more-btn orange" onclick="showPage('requests')" style="position:relative;">
           <span class="mico">📨</span>${t('more_requests')}
           ${(()=>{const pCount=playerRequests.filter(r=>r.status==='pending').length; const total=pCount; return total>0?`<span style="position:absolute;top:6px;right:6px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;">${total}</span>`:''})()}
@@ -7149,13 +7460,17 @@ function morePage(){
         ${isAdmin?`<button class="more-btn" style="background:rgba(255,59,85,0.07);border-color:rgba(255,59,85,0.2);color:var(--red);position:relative;" onclick="showPage('requests')" id="badgeReqBtn">
           <span class="mico">🛡️</span>${t('more_badge_requests')}
           <span id="badgeReqCount" style="display:none;position:absolute;top:6px;right:6px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;align-items:center;justify-content:center;font-size:10px;"></span>
-        </button>`:''}        ${sections.map((s,i)=>`<button class="more-btn blue" onclick="showCustomSection(${i})" style="position:relative;">
-          <span class="mico">${s.icon||'📌'}</span>${s.name}
-          ${isAdmin?`<span onclick="event.stopPropagation();deleteSection(${i})" style="position:absolute;top:6px;right:6px;background:rgba(255,59,85,0.2);color:var(--red);border-radius:6px;padding:2px 6px;font-size:10px;">🗑</span>`:''}
+        </button>`:''}        ${sections.map((s,i)=>({s,i})).filter(({s})=>isAdmin||!s.hidden).map(({s,i})=>`<button class="more-btn blue" onclick="showCustomSection(${i})" style="position:relative;${s.hidden?'opacity:0.45;border-style:dashed;':''}">
+          <span class="mico">${s.icon||'📌'}</span>${s.name}${s.hidden&&isAdmin?' <span style="font-size:10px;">(مخفي)</span>':''}
+          ${isAdmin?`<span style="position:absolute;top:6px;left:6px;display:flex;gap:3px;">
+            <span onclick="event.stopPropagation();openEditSectionModal(${i})" title="تعديل" style="background:rgba(0,184,255,0.2);color:var(--blue);border-radius:6px;padding:2px 5px;font-size:10px;">✏️</span>
+            <span onclick="event.stopPropagation();toggleSectionHidden(${i})" title="${s.hidden?'إظهار':'إخفاء'}" style="background:rgba(255,214,10,0.2);color:var(--gold);border-radius:6px;padding:2px 5px;font-size:10px;">${s.hidden?'👁️':'🙈'}</span>
+            <span onclick="event.stopPropagation();deleteSection(${i})" title="حذف" style="background:rgba(255,59,85,0.2);color:var(--red);border-radius:6px;padding:2px 5px;font-size:10px;">🗑</span>
+          </span>`:''}
         </button>`).join('')}
         <button class="more-btn gold" onclick="showModal('managerModal')"><span class="mico">👑</span>${t('more_manager_login')}</button>
-        <button class="more-btn" style="background:linear-gradient(135deg,rgba(0,184,255,0.12),rgba(168,85,247,0.08));border-color:rgba(0,184,255,0.3);color:var(--blue);grid-column:1/-1;" onclick="teamCardPage()"><span class="mico">🪪</span>${t('more_teamcard')}</button>
-        <button class="more-btn" style="background:linear-gradient(135deg,rgba(255,214,10,0.12),rgba(192,132,252,0.1));border-color:rgba(255,214,10,0.35);color:#ffd60a;" onclick="giftsShopPage()"><span class="mico">🎁</span>${t('more_giftsshop')}</button>
+        ${wrapBuiltin('teamcard', `<button class="more-btn" style="background:linear-gradient(135deg,rgba(0,184,255,0.12),rgba(168,85,247,0.08));border-color:rgba(0,184,255,0.3);color:var(--blue);grid-column:1/-1;" onclick="teamCardPage()"><span class="mico">🪪</span>${t('more_teamcard')}</button>`)}
+        ${wrapBuiltin('giftsshop', `<button class="more-btn" style="background:linear-gradient(135deg,rgba(255,214,10,0.12),rgba(192,132,252,0.1));border-color:rgba(255,214,10,0.35);color:#ffd60a;" onclick="giftsShopPage()"><span class="mico">🎁</span>${t('more_giftsshop')}</button>`)}
         ${isAdmin?`<button class="more-btn" style="background:linear-gradient(135deg,rgba(255,214,10,0.1),rgba(255,165,0,0.06));border-color:rgba(255,214,10,0.3);color:#ffd60a;grid-column:1/-1;" onclick="showPage('managerPanel')"><span class="mico">⚙️</span>${t('more_managerpanel')}</button>`:''}
         ${isAdmin?`<button class="more-btn" style="background:linear-gradient(135deg,rgba(0,184,255,0.12),rgba(139,92,246,0.08));border-color:rgba(0,184,255,0.35);color:var(--blue);grid-column:1/-1;" onclick="showPage('themeManager')"><span class="mico">🎭</span>${t('more_thememanager')}</button>`:''}
       </div>
@@ -7199,6 +7514,14 @@ function morePage(){
       <input id="secIcon" placeholder="إيموجي (مثال: 🏆)">
       <textarea id="secContent" placeholder="محتوى القسم..."></textarea>
       <button class="btn btn-primary" onclick="addSection()">➕ إضافة</button>
+    </div>
+    <div class="card">
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>🗑️ سلة المهملات</span>
+        ${trash.length>0?`<span style="background:rgba(255,59,85,0.2);color:var(--red);border-radius:99px;padding:2px 9px;font-size:11px;font-weight:800;">${trash.length}</span>`:''}
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">كل ما يُحذف (أقسام، رسائل...) يُحفظ هنا لمدة 5 أيام قبل حذفه نهائياً.</div>
+      <button class="btn btn-ghost" onclick="trashPage()">📂 فتح سلة المهملات</button>
     </div>`:''}
     <div class="card">
       <div class="section-title">${t('more_account')}</div>
@@ -8326,10 +8649,63 @@ function addSection(){
   const icon=document.getElementById('secIcon').value.trim()||'📌';
   const content=document.getElementById('secContent').value.trim();
   if(!name) return toast('⚠️ أدخل اسم القسم');
-  sections.push({id:Date.now(),name,icon,content});
+  sections.push({id:Date.now(),name,icon,content,hidden:false});
   save();toast('✅ تمت إضافة '+name);morePage();
 }
-function deleteSection(i){if(!confirm('حذف هذا القسم؟')) return;sections.splice(i,1);save();morePage();}
+function deleteSection(i){
+  const s=sections[i]; if(!s) return;
+  askConfirm(`حذف قسم "${s.name}"؟ سينتقل إلى سلة المهملات ويُحذف نهائياً بعد 5 أيام إن لم تسترجعه.`, ()=>{
+    moveToTrash('section', s);
+    sections.splice(i,1);
+    save();toast('🗑️ تم نقل القسم إلى سلة المهملات');morePage();
+  });
+}
+// إخفاء/إظهار أقسام "المزيد" الأساسية (المدمجة في التطبيق) — للمانجر فقط
+// لا يمكن حذف أو تسمية هذه الأقسام لأنها ميزات أساسية بالتطبيق، فقط إخفاؤها عن المستخدمين
+function isBuiltinHidden(id){ return !!((appSettings.hiddenBuiltins||{})[id]); }
+function toggleBuiltinHidden(id){
+  appSettings.hiddenBuiltins = appSettings.hiddenBuiltins||{};
+  appSettings.hiddenBuiltins[id] = !appSettings.hiddenBuiltins[id];
+  save();
+  toast(appSettings.hiddenBuiltins[id] ? '🙈 تم إخفاء القسم عن المستخدمين' : '👁️ القسم مرئي الآن للجميع');
+  morePage();
+}
+function wrapBuiltin(id, html){
+  const hidden = isBuiltinHidden(id);
+  if(hidden && !isAdmin) return '';
+  if(!isAdmin) return html;
+  let out = html;
+  const relStyle = `position:relative;${hidden?'opacity:.45;border-style:dashed;':''}`;
+  out = /style="/.test(out) ? out.replace('style="', 'style="'+relStyle) : out.replace('<button ', '<button style="'+relStyle+'" ');
+  const icon = `<span onclick="event.stopPropagation();toggleBuiltinHidden('${id}')" title="${hidden?'إظهار':'إخفاء'}" style="position:absolute;top:6px;left:6px;background:rgba(255,214,10,0.22);color:var(--gold);border-radius:6px;padding:2px 5px;font-size:10px;z-index:2;">${hidden?'👁️':'🙈'}</span>`;
+  out = out.replace(/<\/button>\s*$/, icon+'</button>');
+  return out;
+}
+window.toggleBuiltinHidden=toggleBuiltinHidden;
+
+function toggleSectionHidden(i){
+  const s=sections[i]; if(!s) return;
+  s.hidden=!s.hidden;
+  save();toast(s.hidden?'🙈 تم إخفاء القسم عن المستخدمين':'👁️ القسم مرئي الآن للجميع');morePage();
+}
+function openEditSectionModal(i){
+  const s=sections[i]; if(!s) return;
+  document.getElementById('editSecIndex').value=i;
+  document.getElementById('editSecName').value=s.name||'';
+  document.getElementById('editSecIcon').value=s.icon||'📌';
+  document.getElementById('editSecContent').value=s.content||'';
+  showModal('editSectionModal');
+}
+function saveEditSection(){
+  const i=parseInt(document.getElementById('editSecIndex').value,10);
+  const s=sections[i]; if(!s) return closeModal('editSectionModal');
+  const name=document.getElementById('editSecName').value.trim();
+  if(!name) return toast('⚠️ أدخل اسم القسم');
+  s.name=name;
+  s.icon=document.getElementById('editSecIcon').value.trim()||'📌';
+  s.content=document.getElementById('editSecContent').value.trim();
+  save();closeModal('editSectionModal');toast('✅ تم حفظ التعديلات');morePage();
+}
 function showCustomSection(i){
   const s=sections[i]; currentPage='custom_'+i;
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
@@ -8348,6 +8724,121 @@ function showCustomSection(i){
   </div>`;
 }
 function updateSection(i){sections[i].content=document.getElementById('editContent').value;save();toast('✅ تم الحفظ');showCustomSection(i);}
+
+// ===========================
+// GENERIC CONFIRM MODAL (يعوض confirm() الأصلي حتى يعمل داخل التطبيق)
+// ===========================
+function askConfirm(message, onYes, opts){
+  opts=opts||{};
+  const msgEl=document.getElementById('genConfirmMsg');
+  const yesBtn=document.getElementById('genConfirmYesBtn');
+  const iconEl=document.getElementById('genConfirmIcon');
+  if(!msgEl||!yesBtn){ if(window.confirm(message)) onYes(); return; }
+  msgEl.textContent=message;
+  if(iconEl) iconEl.textContent=opts.icon||'⚠️';
+  yesBtn.textContent=opts.yesLabel||'تأكيد';
+  yesBtn.className=opts.dangerous===false?'btn btn-primary':'btn btn-danger';
+  yesBtn.style.flex='1';
+  const newYes=yesBtn.cloneNode(true);
+  yesBtn.parentNode.replaceChild(newYes,yesBtn);
+  newYes.onclick=()=>{ closeModal('genConfirmModal'); onYes(); };
+  showModal('genConfirmModal');
+}
+window.askConfirm=askConfirm;
+
+// ===========================
+// TRASH BIN (سلة المهملات) — للمانجر فقط
+// ===========================
+const TRASH_RETENTION_MS = 5*24*60*60*1000; // 5 أيام
+
+const TRASH_TYPE_LABELS = { section:'📌 قسم', message:'💬 رسالة دردشة' };
+
+function moveToTrash(type, data){
+  trash.push({ id:Date.now()+'_'+Math.random().toString(36).slice(2,8), type, data, deletedAt:Date.now(), deletedBy:currentUser||'مانجر' });
+  save();
+}
+function purgeOldTrash(){
+  const cutoff=Date.now()-TRASH_RETENTION_MS;
+  const fresh=trash.filter(t=>t.deletedAt>=cutoff);
+  if(fresh.length!==trash.length){ trash=fresh; fbSave('trash', trash); }
+}
+function restoreFromTrash(id){
+  const idx=trash.findIndex(t=>t.id===id); if(idx<0) return;
+  const item=trash[idx];
+  if(item.type==='section'){
+    sections.push(item.data);
+  } else if(item.type==='message'){
+    const roomId=item.roomId||'general';
+    if(!roomMessages[roomId]) roomMessages[roomId]=[];
+    roomMessages[roomId].push(item.data);
+    roomMessages[roomId].sort((a,b)=>(a.ts||0)-(b.ts||0));
+    fbSave('chatRooms/'+roomId, roomMessages[roomId]);
+  }
+  trash.splice(idx,1);
+  save();
+  toast('♻️ تم الاسترجاع بنجاح');
+  trashPage();
+}
+function permaDeleteTrash(id){
+  askConfirm('حذف هذا العنصر نهائياً؟ لا يمكن التراجع عن هذا الإجراء.', ()=>{
+    const idx=trash.findIndex(t=>t.id===id); if(idx<0) return;
+    trash.splice(idx,1);
+    save();
+    toast('🗑️ تم الحذف النهائي');
+    trashPage();
+  });
+}
+function emptyTrash(){
+  if(trash.length===0) return toast('سلة المهملات فارغة');
+  askConfirm(`حذف جميع عناصر سلة المهملات (${trash.length}) نهائياً؟`, ()=>{
+    trash=[]; save(); toast('🗑️ تم إخلاء سلة المهملات'); trashPage();
+  });
+}
+function trashPage(){
+  if(!isAdmin){ return showPage('more'); }
+  purgeOldTrash();
+  currentPage='trash';
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  const sorted=[...trash].sort((a,b)=>b.deletedAt-a.deletedAt);
+  document.getElementById('app').innerHTML=`
+  <div class="page-anim">
+    <div class="card">
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>🗑️ سلة المهملات</span>
+        <button class="btn-sm btn-ghost" onclick="showPage('more')">← رجوع</button>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.7;">
+        العناصر المحذوفة تبقى هنا لمدة 5 أيام، ويمكنك استرجاعها في أي وقت. بعد 5 أيام تُحذف نهائياً وتلقائياً. المستخدمون العاديون لا يرون هذه القائمة.
+      </div>
+      ${sorted.length===0?`<div class="empty"><div class="ico">🗑️</div>سلة المهملات فارغة</div>`:
+        sorted.map(item=>{
+          const remainMs=TRASH_RETENTION_MS-(Date.now()-item.deletedAt);
+          const remainDays=Math.max(0,Math.ceil(remainMs/(24*60*60*1000)));
+          let title='', preview='';
+          if(item.type==='section'){ title=(item.data.icon||'📌')+' '+item.data.name; preview=(item.data.content||'').slice(0,80); }
+          else if(item.type==='message'){ title='💬 رسالة من '+(item.data.user||'؟'); preview=item.data.text||(item.data.img?'📷 صورة':(item.data.voice?'🎙️ رسالة صوتية':'')); }
+          return `<div class="story-card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:3px;">${TRASH_TYPE_LABELS[item.type]||item.type}</div>
+              <div style="font-weight:700;font-size:14px;">${title}</div>
+              ${preview?`<div style="font-size:12px;color:var(--text2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${preview}</div>`:''}
+              <div style="font-size:10px;color:rgba(255,59,85,0.7);margin-top:5px;">⏳ يُحذف نهائياً بعد ${remainDays} ${remainDays===1?'يوم':'أيام'}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+              <button class="btn-sm btn-primary" onclick="restoreFromTrash('${item.id}')">♻️ استرجاع</button>
+              <button class="btn-sm btn-danger" onclick="permaDeleteTrash('${item.id}')">🗑 نهائي</button>
+            </div>
+          </div>`;
+        }).join('')
+      }
+      ${sorted.length>0?`<button class="btn btn-danger" style="margin-top:6px;" onclick="emptyTrash()">🗑️ إخلاء السلة نهائياً</button>`:''}
+    </div>
+  </div>`;
+}
+window.deleteSection=deleteSection; window.toggleSectionHidden=toggleSectionHidden;
+window.openEditSectionModal=openEditSectionModal; window.saveEditSection=saveEditSection;
+window.trashPage=trashPage; window.restoreFromTrash=restoreFromTrash;
+window.permaDeleteTrash=permaDeleteTrash; window.emptyTrash=emptyTrash;
 
 // ===========================
 // BULLETIN
@@ -9173,6 +9664,23 @@ function rollLootbox(){
 // MY CLOUB — PLAYER CARDS & PACKS
 // ===========================
 // cardPool item shape: {id, name, pos, club, ovr, img}
+// Groups goal-scorer entries by player so a player with multiple goals shows
+// as one line with all minutes together, e.g. "⚽ YASS '37, '88"
+function groupScorersByPlayer(entries){
+  if(!entries||entries.length===0) return [];
+  const map={}, order=[];
+  entries.forEach(s=>{
+    const name=typeof s==='object'?(s.player||''):s;
+    const min=typeof s==='object'?(s.min||''):'';
+    if(!name) return;
+    if(!map[name]){ map[name]=[]; order.push(name); }
+    if(min!==''&&min!=null&&min!=='?') map[name].push(min);
+  });
+  return order.map(name=>({name, mins: map[name].slice().sort((a,b)=>(parseInt(a)||0)-(parseInt(b)||0))}));
+}
+function formatScorerMins(mins){
+  return (mins&&mins.length>0) ? mins.map(m=>`'${m}`).join(', ') : '';
+}
 function cardRarity(ovr){
   ovr=parseInt(ovr)||0;
   if(ovr>=120) return {key:'iconic',    name:'ايقوني',   color:'#f4f0ff', css:'rarity-iconic'};
@@ -10228,6 +10736,40 @@ function votePage(){
   const u=getUserData(currentUser);
   const hasVotAccess=isAdmin||u.votUnlocked;
   document.getElementById('app').innerHTML=`
+  <style>
+    @keyframes rank1Pulse {
+      from { box-shadow: 0 0 10px rgba(238,9,121,0.6), 0 0 22px rgba(255,106,0,0.4); transform: scale(1); }
+      to   { box-shadow: 0 0 20px rgba(238,9,121,0.9), 0 0 40px rgba(255,106,0,0.7); transform: scale(1.08); }
+    }
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+    .p-card-wrap { position: relative; }
+    .p-card-inner {
+      border-radius: 14px;
+      padding: 10px 5px 9px;
+      text-align: center;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      transition: transform 0.15s;
+      cursor: pointer;
+      position: relative;
+      overflow: visible;
+    }
+    .p-card-inner:active { transform: scale(0.95); }
+    .p-card-inner .cc-pos { font-size:9px; font-weight:900; opacity:0.7; letter-spacing:1px; }
+    .p-card-inner .cc-ovr { font-size:22px; font-weight:900; margin-top:2px; }
+    .p-card-inner .cc-name { font-size:10.5px; font-weight:800; margin-top:4px; line-height:1.25; min-height:26px; overflow:hidden; padding:0 2px; }
+    .p-card-inner .cc-club { font-size:8.5px; font-weight:700; opacity:0.65; margin-top:2px; }
+    .p-card-inner .cc-stats { font-size:8px; font-weight:700; margin-top:4px; display:flex; justify-content:center; gap:5px; flex-wrap:wrap; opacity:0.85; }
+    .p-card-inner.rarity-icon .cc-club { color: rgba(255,255,255,0.75); }
+    .p-card-inner.rarity-icon .cc-stats { color: rgba(255,255,255,0.8); }
+    .p-admin-btns { display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap; }
+    .vot-pct-track { width:100%; height:5px; border-radius:99px; background:rgba(255,255,255,0.15); overflow:hidden; margin-top:6px; }
+    .vot-pct-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--blue)); border-radius:99px; transition:width 0.5s; }
+  </style>
   <div class="page-anim">
     ${!hasVotAccess?`
     <div class="card" style="text-align:center;padding:32px 16px;">
@@ -10269,27 +10811,33 @@ function votePage(){
       </div>
       <button class="btn btn-danger" onclick="resetVotes()">🔄 إعادة تعيين كل الأصوات</button>
       <div style="border-top:1px solid var(--border);margin:14px 0;"></div>`:''}
-      ${nominees.length===0?'<div class="empty"><div class="ico">🗳️</div>لا يوجد مرشحون بعد</div>':
-        nominees.map((n,i)=>{
+      ${nominees.length===0?'<div class="empty"><div class="ico">🗳️</div>لا يوجد مرشحون بعد</div>':`
+      <div class="players-grid" style="padding:0;margin-top:10px;">
+        ${nominees.map((n,i)=>{
           const pct=totalVotes>0?Math.round(((n.votes||[]).length/totalVotes)*100):0;
           const voted=(n.votes||[]).includes(currentUser);
-          const rarity=n.ovr?cardRarity(n.ovr):null;
-          return `<div class="player-card" ${rarity?`style="border-color:${rarity.color}4d;"`:''}>
-            ${n.img?`<img src="${n.img}" ${rarity?`style="border:2px solid ${rarity.color};"`:''}>`:
-              rarity?`<div class="player-thumb ${rarity.css}" style="display:flex;align-items:center;justify-content:center;font-weight:900;">${n.ovr}</div>`:
-              '<div class="player-thumb">🏆</div>'}
-            <div class="player-info" style="flex:1;">
-              <h3>${n.name}</h3>
-              ${rarity?`<span class="pos-badge" style="background:${rarity.color}22;color:${rarity.color};">${n.pos?n.pos+' • ':''}${rarity.name} ${n.ovr}</span>`:''}
-              <div class="xp-bar-track"><div class="xp-bar-fill" style="width:${pct}%;"></div></div>
-              <p>${(n.votes||[]).length} صوت (${pct}%)</p>
+          const ovr=n.ovr?parseInt(n.ovr):null;
+          const rarity=ovr?cardRarity(ovr):null;
+          const nm=n.name.length>10?n.name.slice(0,9)+'…':n.name;
+          const isLeading = totalVotes>0 && (n.votes||[]).length>0 && (n.votes||[]).length===Math.max(...nominees.map(x=>(x.votes||[]).length));
+          return `<div class="p-card-wrap">
+            ${isLeading?`<div style="position:absolute;top:-8px;right:-8px;z-index:10;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#ff6a00,#ee0979);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 14px rgba(238,9,121,0.7);animation:rank1Pulse 1.4s ease-in-out infinite alternate;">🥇</div>`:''}
+            <div class="p-card-inner ${rarity?rarity.css:'rarity-bronze'}" onclick="${players.some(p=>p.name===n.name)?`showProfile('${n.name.replace(/'/g,"\\'")}')`:''}">
+              ${n.img?`<img src="${n.img}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;margin:0 auto 4px;display:block;border:2px solid rgba(0,0,0,0.2);">`:''}
+              <div class="cc-pos">${n.pos||'🏆'}</div>
+              <div class="cc-ovr">${ovr||'—'}</div>
+              <div class="cc-name">${nm}</div>
+              <div class="cc-club">🏟️ ${(n.team||'-').length>10?(n.team.slice(0,9)+'…'):(n.team||'-')}</div>
+              <div class="vot-pct-track"><div class="vot-pct-fill" style="width:${pct}%;"></div></div>
+              <div class="cc-stats">${(n.votes||[]).length} صوت (${pct}%)</div>
             </div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              ${hasVotAccess&&!isAdmin?(myVote?(voted?'<span class="admin-badge">✅ صوتك</span>':''):`<button class="btn-sm btn-primary" onclick="castVote(${i})">🗳️ صوّت</button>`):''}
-              ${isAdmin?`<button class="btn-sm btn-danger" onclick="deleteNominee(${i})">🗑</button>`:''}
+            <div class="p-admin-btns">
+              ${hasVotAccess&&!isAdmin?(myVote?(voted?'<span class="admin-badge">✅ صوتك</span>':''):`<button class="btn-sm btn-primary" style="width:100%;" onclick="event.stopPropagation();castVote(${i})">🗳️ صوّت</button>`):''}
+              ${isAdmin?`<button class="btn-sm btn-danger" style="padding:4px 8px;font-size:10px;" onclick="event.stopPropagation();deleteNominee(${i})">🗑</button>`:''}
             </div>
           </div>`;
         }).join('')}
+      </div>`}
       ${hasVotAccess&&!isAdmin&&myVote?`<div style="font-size:12px;color:var(--text2);margin-top:10px;text-align:center;">✅ لقد صوّت لـ "${myVote.name}". يمكنك التصويت مرة واحدة فقط.</div>`:''}
     </div>
   </div>`;
@@ -11896,6 +12444,7 @@ window.addPlayer=addPlayer; window.deletePlayer=deletePlayer;
 window.addTeam=addTeam; window.deleteTeam=deleteTeam;
 window.showTeamPage=showTeamPage; window.stopTeamAnthem=stopTeamAnthem; window.updateTeam=updateTeam;
 window.addMatch=addMatch; window.deleteMatch=deleteMatch;
+window.editMatch=editMatch; window.cancelEditMatch=cancelEditMatch;
 window.sendMsg=sendMsg;
 window.addLive=addLive; window.deleteLive=deleteLive;
 window.addVideo=addVideo; window.likeVideo=likeVideo; window.deleteVideo=deleteVideo;
@@ -11921,6 +12470,7 @@ window.addCode=addCode; window.deleteCode=deleteCode; window.redeemCode=redeemCo
 window.showProfile=showProfile; window.saveProfile=saveProfile;
 window.changePassword=changePassword; window.saveRecoveryInfo=saveRecoveryInfo;
 window.switchRoom=switchRoom; window.sendMsg=sendMsg; window.previewChatImg=previewChatImg; window.cancelChatImg=cancelChatImg;
+window.deleteMsg=deleteMsg;
 window.previewProfilePhoto=previewProfilePhoto; window.quickUpdatePhoto=quickUpdatePhoto;
 window.saveVoteTitle=saveVoteTitle; window.addNominee=addNominee; window.deleteNominee=deleteNominee;
 window.resetVotes=resetVotes; window.castVote=castVote; window.addNomineeFromPlayer=addNomineeFromPlayer;
