@@ -5524,22 +5524,46 @@ function playersPage(){
       gap: 11px;
       padding: 0 14px 14px;
       overflow-x: hidden;
+      perspective: 1000px;
     }
     .p-card-wrap {
       position: relative;
       min-width: 0;
+      transform-style: preserve-3d;
+      animation: cardReveal 0.65s cubic-bezier(.16,1,.3,1) both;
+      animation-delay: var(--card-delay, 0s);
+    }
+    @keyframes cardReveal {
+      0% { opacity: 0; transform: rotateY(55deg) rotateX(6deg) scale(0.8) translateY(10px); filter: blur(5px) brightness(1.5); }
+      55% { filter: blur(0) brightness(1.15); }
+      100% { opacity: 1; transform: rotateY(0) rotateX(0) scale(1) translateY(0); filter: blur(0) brightness(1); }
     }
     .p-card-inner {
       border-radius: 15px;
       padding: 12px 6px 10px;
       text-align: center;
       border: 1.5px solid rgba(255,255,255,0.35);
-      transition: transform 0.15s;
+      transition: transform 0.35s cubic-bezier(.2,.85,.3,1.3), box-shadow 0.3s ease, filter 0.3s ease;
       cursor: pointer;
       position: relative;
       overflow: visible;
+      will-change: transform;
+      transform-style: preserve-3d;
+      --tilt-x: 0deg; --tilt-y: 0deg; --glare-x: 50%; --glare-y: 50%;
+      transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
     }
-    .p-card-inner:active { transform: scale(0.95); }
+    .p-card-inner.tilting { transition: transform 0.08s linear; }
+    .p-card-inner:active {
+      transform: scale(0.93) rotateX(calc(var(--tilt-x) + 6deg)) rotateY(var(--tilt-y)) translateY(1px);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.18);
+      filter: brightness(1.1);
+    }
+    .p-card-inner:not(.rarity-legendary):not(.rarity-iconic):not(.rarity-epic)::before {
+      content:''; position:absolute; inset:0; border-radius:inherit;
+      background: radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255,255,255,0.5), transparent 55%);
+      opacity: 0; transition: opacity 0.25s ease; pointer-events:none; z-index:1;
+    }
+    .p-card-inner.tilting:not(.rarity-legendary):not(.rarity-iconic):not(.rarity-epic)::before { opacity: 0.55; }
     .p-card-inner .cc-pos { font-size:10px; font-weight:900; opacity:0.7; letter-spacing:1px; }
     .p-card-inner .cc-ovr { font-size:25px; font-weight:900; margin-top:2px; }
     .p-card-inner .cc-name { font-size:12px; font-weight:800; margin-top:5px; line-height:1.28; min-height:22px; overflow:hidden; padding:0 2px; }
@@ -5547,8 +5571,60 @@ function playersPage(){
     .p-card-inner .cc-stats { font-size:9px; font-weight:700; margin-top:5px; display:flex; justify-content:center; gap:6px; flex-wrap:wrap; opacity:0.85; }
     .p-card-inner.rarity-icon .cc-club { color: rgba(255,255,255,0.75); }
     .p-card-inner.rarity-icon .cc-stats { color: rgba(255,255,255,0.8); }
-    .p-admin-btns { display:flex; gap:5px; justify-content:center; margin-top:7px; flex-wrap:wrap; }
+    .p-card-inner.rarity-legendary::after,
+    .p-card-inner.rarity-iconic::after,
+    .p-card-inner.rarity-epic::after {
+      content:''; position:absolute; inset:-2px; border-radius:inherit;
+      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.65), transparent 68%);
+      opacity: 0; pointer-events:none; z-index:2;
+      animation: cardBurst 0.7s ease-out both;
+      animation-delay: calc(var(--card-delay, 0s) + 0.32s);
+    }
+    @keyframes cardBurst {
+      0% { opacity: 0; transform: scale(0.6); }
+      45% { opacity: 0.95; transform: scale(1.15); }
+      100% { opacity: 0; transform: scale(1.4); }
+    }
+    .p-card-inner.rarity-legendary::before,
+    .p-card-inner.rarity-iconic::before,
+    .p-card-inner.rarity-epic::before {
+      content:''; position:absolute; inset:0; border-radius:inherit;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 47%, transparent 64%);
+      background-size: 250% 250%; background-position: 200% 200%;
+      animation: cardSheen 5.5s ease-in-out infinite; pointer-events:none; z-index:1;
+    }
+    @keyframes cardSheen {
+      0%, 15% { background-position: 200% 200%; opacity:0; }
+      27% { opacity:0.75; }
+      45% { background-position: -50% -50%; opacity:0.75; }
+      58%, 100% { background-position: -50% -50%; opacity:0; }
+    }
+    /* legendary-exclusive premium touch: crisp pulsing gold rim + twinkle, no blur/ring */
+    .p-card-inner.rarity-legendary { animation: legendaryGlow 2.6s ease-in-out infinite; }
+    .p-card-inner.rarity-legendary::after {
+      background:
+        radial-gradient(circle 2.5px at 18% 22%, #fffbe6 0%, transparent 70%),
+        radial-gradient(circle 2px at 80% 28%, #fffbe6 0%, transparent 70%),
+        radial-gradient(circle 2px at 52% 82%, #fffbe6 0%, transparent 70%),
+        radial-gradient(circle at 50% 40%, rgba(255,255,255,0.55), transparent 68%);
+      animation: legendaryTwinkle 3.2s ease-in-out infinite;
+      animation-delay: 0s;
+      inset: 0;
+    }
+    @keyframes legendaryGlow {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(255,214,10,0.35), 0 3px 10px rgba(255,214,10,0.15); }
+      50% { box-shadow: 0 0 0 1.5px rgba(255,224,140,0.75), 0 4px 16px rgba(255,214,10,0.4); }
+    }
+    @keyframes legendaryTwinkle {
+      0%, 100% { opacity: 0; }
+      10% { opacity: 0.9; }
+      20% { opacity: 0; }
+      50% { opacity: 0; }
+      62% { opacity: 0.85; }
+      74% { opacity: 0; }
+    }
     .p-skills-row { display:flex; gap:5px; margin-bottom:6px; }
+    .p-admin-btns { display:flex; gap:5px; justify-content:center; margin-top:7px; flex-wrap:wrap; }
     .p-skill-slot {
       flex: 1; min-width: 0; height: auto; min-height: 25px;
       display: flex; align-items: center; justify-content: center;
@@ -5584,9 +5660,9 @@ function playersPage(){
         const ovr = parseInt(p.ovr)||60;
         const rarity = cardRarity(ovr);
         const nm = p.name.length>12 ? p.name.slice(0,11)+'…' : p.name;
-        return `<div class="p-card-wrap">
+        return `<div class="p-card-wrap" style="--card-delay:${Math.min(rank*0.05,0.45)}s">
           ${playerSkillSlotsHTML(p, i)}
-          <div class="p-card-inner ${rarity.css}" onclick="showProfile('${p.name.replace(/'/g,"\\'")}')">
+          <div class="p-card-inner ${rarity.css}" onclick="showProfile('${p.name.replace(/'/g,"\\'")}')" onpointermove="tiltCard(event,this)" onpointerup="resetTilt(this)" onpointerleave="resetTilt(this)" onpointercancel="resetTilt(this)">
             ${rankBadge(rank+1)}
             ${ovrChangeBadge(p)}
             ${p.img?`<img src="${p.img}" style="width:60px;height:60px;border-radius:12px;object-fit:cover;margin:0 auto 5px;display:block;border:2px solid rgba(0,0,0,0.2);">`:''}
@@ -9702,6 +9778,30 @@ function groupScorersByPlayer(entries){
 function formatScorerMins(mins){
   return (mins&&mins.length>0) ? mins.map(m=>`'${m}`).join(', ') : '';
 }
+// ---- interactive card tilt / holo effect ----
+let _tiltRAF = null;
+function tiltCard(e, el){
+  if(_tiltRAF) return;
+  _tiltRAF = requestAnimationFrame(()=>{
+    _tiltRAF = null;
+    const r = el.getBoundingClientRect();
+    if(r.width===0||r.height===0) return;
+    const px = Math.min(1,Math.max(0,(e.clientX - r.left) / r.width));
+    const py = Math.min(1,Math.max(0,(e.clientY - r.top) / r.height));
+    const rx = (0.5 - py) * 16;
+    const ry = (px - 0.5) * 16;
+    el.style.setProperty('--tilt-x', rx.toFixed(2)+'deg');
+    el.style.setProperty('--tilt-y', ry.toFixed(2)+'deg');
+    el.style.setProperty('--glare-x', (px*100).toFixed(1)+'%');
+    el.style.setProperty('--glare-y', (py*100).toFixed(1)+'%');
+    el.classList.add('tilting');
+  });
+}
+function resetTilt(el){
+  el.classList.remove('tilting');
+  el.style.setProperty('--tilt-x','0deg');
+  el.style.setProperty('--tilt-y','0deg');
+}
 function cardRarity(ovr){
   ovr=parseInt(ovr)||0;
   if(ovr>=120) return {key:'iconic',    name:'ايقوني',   color:'#f4f0ff', css:'rarity-iconic'};
@@ -10947,19 +11047,45 @@ function votePage(){
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       padding: 0 14px 14px;
+      perspective: 1000px;
     }
-    .p-card-wrap { position: relative; }
+    .p-card-wrap {
+      position: relative;
+      transform-style: preserve-3d;
+      animation: cardReveal 0.65s cubic-bezier(.16,1,.3,1) both;
+      animation-delay: var(--card-delay, 0s);
+    }
+    @keyframes cardReveal {
+      0% { opacity: 0; transform: rotateY(55deg) rotateX(6deg) scale(0.8) translateY(10px); filter: blur(5px) brightness(1.5); }
+      55% { filter: blur(0) brightness(1.15); }
+      100% { opacity: 1; transform: rotateY(0) rotateX(0) scale(1) translateY(0); filter: blur(0) brightness(1); }
+    }
     .p-card-inner {
       border-radius: 14px;
       padding: 10px 5px 9px;
       text-align: center;
       border: 1.5px solid rgba(255,255,255,0.35);
-      transition: transform 0.15s;
+      transition: transform 0.35s cubic-bezier(.2,.85,.3,1.3), box-shadow 0.3s ease, filter 0.3s ease;
       cursor: pointer;
       position: relative;
       overflow: visible;
+      will-change: transform;
+      transform-style: preserve-3d;
+      --tilt-x: 0deg; --tilt-y: 0deg; --glare-x: 50%; --glare-y: 50%;
+      transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
     }
-    .p-card-inner:active { transform: scale(0.95); }
+    .p-card-inner.tilting { transition: transform 0.08s linear; }
+    .p-card-inner:active {
+      transform: scale(0.93) rotateX(calc(var(--tilt-x) + 6deg)) rotateY(var(--tilt-y)) translateY(1px);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.18);
+      filter: brightness(1.1);
+    }
+    .p-card-inner:not(.rarity-legendary):not(.rarity-iconic):not(.rarity-epic)::before {
+      content:''; position:absolute; inset:0; border-radius:inherit;
+      background: radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255,255,255,0.5), transparent 55%);
+      opacity: 0; transition: opacity 0.25s ease; pointer-events:none; z-index:1;
+    }
+    .p-card-inner.tilting:not(.rarity-legendary):not(.rarity-iconic):not(.rarity-epic)::before { opacity: 0.55; }
     .p-card-inner .cc-pos { font-size:9px; font-weight:900; opacity:0.7; letter-spacing:1px; }
     .p-card-inner .cc-ovr { font-size:22px; font-weight:900; margin-top:2px; }
     .p-card-inner .cc-name { font-size:10.5px; font-weight:800; margin-top:4px; line-height:1.25; min-height:26px; overflow:hidden; padding:0 2px; }
@@ -10967,6 +11093,58 @@ function votePage(){
     .p-card-inner .cc-stats { font-size:8px; font-weight:700; margin-top:4px; display:flex; justify-content:center; gap:5px; flex-wrap:wrap; opacity:0.85; }
     .p-card-inner.rarity-icon .cc-club { color: rgba(255,255,255,0.75); }
     .p-card-inner.rarity-icon .cc-stats { color: rgba(255,255,255,0.8); }
+    .p-card-inner.rarity-legendary::after,
+    .p-card-inner.rarity-iconic::after,
+    .p-card-inner.rarity-epic::after {
+      content:''; position:absolute; inset:-2px; border-radius:inherit;
+      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.65), transparent 68%);
+      opacity: 0; pointer-events:none; z-index:2;
+      animation: cardBurst 0.7s ease-out both;
+      animation-delay: calc(var(--card-delay, 0s) + 0.32s);
+    }
+    @keyframes cardBurst {
+      0% { opacity: 0; transform: scale(0.6); }
+      45% { opacity: 0.95; transform: scale(1.15); }
+      100% { opacity: 0; transform: scale(1.4); }
+    }
+    .p-card-inner.rarity-legendary::before,
+    .p-card-inner.rarity-iconic::before,
+    .p-card-inner.rarity-epic::before {
+      content:''; position:absolute; inset:0; border-radius:inherit;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 47%, transparent 64%);
+      background-size: 250% 250%; background-position: 200% 200%;
+      animation: cardSheen 5.5s ease-in-out infinite; pointer-events:none; z-index:1;
+    }
+    @keyframes cardSheen {
+      0%, 15% { background-position: 200% 200%; opacity:0; }
+      27% { opacity:0.75; }
+      45% { background-position: -50% -50%; opacity:0.75; }
+      58%, 100% { background-position: -50% -50%; opacity:0; }
+    }
+    /* legendary-exclusive premium touch: crisp pulsing gold rim + twinkle, no blur/ring */
+    .p-card-inner.rarity-legendary { animation: legendaryGlow 2.6s ease-in-out infinite; }
+    .p-card-inner.rarity-legendary::after {
+      background:
+        radial-gradient(circle 2.5px at 18% 22%, #fffbe6 0%, transparent 70%),
+        radial-gradient(circle 2px at 80% 28%, #fffbe6 0%, transparent 70%),
+        radial-gradient(circle 2px at 52% 82%, #fffbe6 0%, transparent 70%),
+        radial-gradient(circle at 50% 40%, rgba(255,255,255,0.55), transparent 68%);
+      animation: legendaryTwinkle 3.2s ease-in-out infinite;
+      animation-delay: 0s;
+      inset: 0;
+    }
+    @keyframes legendaryGlow {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(255,214,10,0.35), 0 3px 10px rgba(255,214,10,0.15); }
+      50% { box-shadow: 0 0 0 1.5px rgba(255,224,140,0.75), 0 4px 16px rgba(255,214,10,0.4); }
+    }
+    @keyframes legendaryTwinkle {
+      0%, 100% { opacity: 0; }
+      10% { opacity: 0.9; }
+      20% { opacity: 0; }
+      50% { opacity: 0; }
+      62% { opacity: 0.85; }
+      74% { opacity: 0; }
+    }
     .p-admin-btns { display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap; }
     .vot-pct-track { width:100%; height:5px; border-radius:99px; background:rgba(255,255,255,0.15); overflow:hidden; margin-top:6px; }
     .vot-pct-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--blue)); border-radius:99px; transition:width 0.5s; }
@@ -11021,9 +11199,9 @@ function votePage(){
           const rarity=ovr?cardRarity(ovr):null;
           const nm=n.name.length>10?n.name.slice(0,9)+'…':n.name;
           const isLeading = totalVotes>0 && (n.votes||[]).length>0 && (n.votes||[]).length===Math.max(...nominees.map(x=>(x.votes||[]).length));
-          return `<div class="p-card-wrap">
+          return `<div class="p-card-wrap" style="--card-delay:${Math.min(i*0.05,0.45)}s">
             ${isLeading?`<div style="position:absolute;top:-8px;right:-8px;z-index:10;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#ff6a00,#ee0979);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 14px rgba(238,9,121,0.7);animation:rank1Pulse 1.4s ease-in-out infinite alternate;">🥇</div>`:''}
-            <div class="p-card-inner ${rarity?rarity.css:'rarity-bronze'}" onclick="${players.some(p=>p.name===n.name)?`showProfile('${n.name.replace(/'/g,"\\'")}')`:''}">
+            <div class="p-card-inner ${rarity?rarity.css:'rarity-bronze'}" onclick="${players.some(p=>p.name===n.name)?`showProfile('${n.name.replace(/'/g,"\\'")}')`:''}" onpointermove="tiltCard(event,this)" onpointerup="resetTilt(this)" onpointerleave="resetTilt(this)" onpointercancel="resetTilt(this)">
               ${n.img?`<img src="${n.img}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;margin:0 auto 4px;display:block;border:2px solid rgba(0,0,0,0.2);">`:''}
               <div class="cc-pos">${n.pos||'🏆'}</div>
               <div class="cc-ovr">${ovr||'—'}</div>
