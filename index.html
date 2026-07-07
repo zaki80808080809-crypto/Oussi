@@ -5520,16 +5520,18 @@ function playersPage(){
     }
     .players-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 11px;
       padding: 0 14px 14px;
+      overflow-x: hidden;
     }
     .p-card-wrap {
       position: relative;
+      min-width: 0;
     }
     .p-card-inner {
-      border-radius: 14px;
-      padding: 10px 5px 9px;
+      border-radius: 15px;
+      padding: 12px 6px 10px;
       text-align: center;
       border: 1.5px solid rgba(255,255,255,0.35);
       transition: transform 0.15s;
@@ -5538,14 +5540,33 @@ function playersPage(){
       overflow: visible;
     }
     .p-card-inner:active { transform: scale(0.95); }
-    .p-card-inner .cc-pos { font-size:9px; font-weight:900; opacity:0.7; letter-spacing:1px; }
-    .p-card-inner .cc-ovr { font-size:22px; font-weight:900; margin-top:2px; }
-    .p-card-inner .cc-name { font-size:10.5px; font-weight:800; margin-top:4px; line-height:1.25; min-height:26px; overflow:hidden; padding:0 2px; }
-    .p-card-inner .cc-club { font-size:8.5px; font-weight:700; opacity:0.65; margin-top:2px; }
-    .p-card-inner .cc-stats { font-size:8px; font-weight:700; margin-top:4px; display:flex; justify-content:center; gap:5px; flex-wrap:wrap; opacity:0.85; }
+    .p-card-inner .cc-pos { font-size:10px; font-weight:900; opacity:0.7; letter-spacing:1px; }
+    .p-card-inner .cc-ovr { font-size:25px; font-weight:900; margin-top:2px; }
+    .p-card-inner .cc-name { font-size:12px; font-weight:800; margin-top:5px; line-height:1.28; min-height:22px; overflow:hidden; padding:0 2px; }
+    .p-card-inner .cc-club { font-size:9.5px; font-weight:700; opacity:0.65; margin-top:2px; }
+    .p-card-inner .cc-stats { font-size:9px; font-weight:700; margin-top:5px; display:flex; justify-content:center; gap:6px; flex-wrap:wrap; opacity:0.85; }
     .p-card-inner.rarity-icon .cc-club { color: rgba(255,255,255,0.75); }
     .p-card-inner.rarity-icon .cc-stats { color: rgba(255,255,255,0.8); }
-    .p-admin-btns { display:flex; gap:4px; justify-content:center; margin-top:6px; flex-wrap:wrap; }
+    .p-admin-btns { display:flex; gap:5px; justify-content:center; margin-top:7px; flex-wrap:wrap; }
+    .p-skills-row { display:flex; gap:5px; margin-bottom:6px; }
+    .p-skill-slot {
+      flex: 1; min-width: 0; height: auto; min-height: 25px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(160deg,#f6d675,#c8912f 55%,#8a5d1c);
+      clip-path: polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);
+      border: 1px solid rgba(255,224,140,0.85);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+      font-size: 8px; font-weight: 900; color: #3a2405;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+      line-height: 1.15; text-align: center;
+      padding: 4px 6px; cursor: pointer; white-space: normal; overflow: visible; word-break: keep-all; overflow-wrap: normal;
+    }
+    .p-skill-slot:active { transform: scale(0.93); }
+    .p-skill-slot.empty {
+      background: rgba(255,255,255,0.05); box-shadow: none;
+      border: 1.5px dashed rgba(255,255,255,0.28); color: rgba(255,255,255,0.4);
+      font-size: 13px;
+    }
   </style>
   <div class="page-anim">
     <div style="margin:12px 14px 6px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
@@ -5562,33 +5583,33 @@ function playersPage(){
         const i = players.indexOf(p);
         const ovr = parseInt(p.ovr)||60;
         const rarity = cardRarity(ovr);
-        const nm = p.name.length>10 ? p.name.slice(0,9)+'…' : p.name;
-        const hasStats = (p.goals||0)>0||(p.cleanSheets||0)>0||(p.assists||0)>0;
-        const hasCards = (p.yellowCards||0)>0||(p.redCards||0)>0;
+        const nm = p.name.length>12 ? p.name.slice(0,11)+'…' : p.name;
         return `<div class="p-card-wrap">
-          ${rankBadge(rank+1)}
-          ${ovrChangeBadge(p)}
+          ${playerSkillSlotsHTML(p, i)}
           <div class="p-card-inner ${rarity.css}" onclick="showProfile('${p.name.replace(/'/g,"\\'")}')">
-            ${p.img?`<img src="${p.img}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;margin:0 auto 4px;display:block;border:2px solid rgba(0,0,0,0.2);">`:''}
+            ${rankBadge(rank+1)}
+            ${ovrChangeBadge(p)}
+            ${p.img?`<img src="${p.img}" style="width:60px;height:60px;border-radius:12px;object-fit:cover;margin:0 auto 5px;display:block;border:2px solid rgba(0,0,0,0.2);">`:''}
             <div class="cc-pos">${p.pos||'-'}</div>
             <div class="cc-ovr">${ovr}${ovrDeltaBadge(p)}</div>
             <div class="cc-name">${nm} ${badgeIcon(getUserData(p.name).badge,10)}</div>
-            <div class="cc-club">🏟️ ${(p.team||'-').length>10?(p.team.slice(0,9)+'…'):(p.team||'-')}</div>
-            ${hasStats?`<div class="cc-stats">
-              ${(p.goals||0)>0?`<span>⚽${p.goals}</span>`:''}
-              ${(p.assists||0)>0?`<span>🅰️${p.assists}</span>`:''}
-              ${(p.cleanSheets||0)>0?`<span>🧤${p.cleanSheets}</span>`:''}
-            </div>`:''}
-            ${hasCards?`<div class="cc-stats">
-              ${(p.yellowCards||0)>0?`<span>🟨${p.yellowCards}</span>`:''}
-              ${(p.redCards||0)>0?`<span>🟥${p.redCards}</span>`:''}
-            </div>`:''}
+            <div class="cc-club">🏟️ ${(p.team||'-').length>12?(p.team.slice(0,11)+'…'):(p.team||'-')}</div>
+            <div class="cc-stats">
+              <span>⚽${p.goals||0}</span>
+              <span>🅰️${p.assists||0}</span>
+              <span>🧤${p.cleanSheets||0}</span>
+            </div>
+            <div class="cc-stats">
+              <span>🟨${p.yellowCards||0}</span>
+              <span>🟥${p.redCards||0}</span>
+            </div>
           </div>
           ${isAdmin?`<div class="p-admin-btns">
             <button class="btn-sm btn-danger" style="padding:4px 8px;font-size:10px;" onclick="event.stopPropagation();deletePlayer(${i})">🗑</button>
             <button class="btn-sm" style="background:rgba(0,184,255,0.15);color:var(--blue);border:1px solid rgba(0,184,255,0.3);padding:4px 8px;font-size:10px;" onclick="event.stopPropagation();editPlayerOvr(${i})">⭐OVR</button>
             <button class="btn-sm" style="background:rgba(255,214,10,0.15);color:#ffd60a;border:1px solid rgba(255,214,10,0.3);padding:4px 8px;font-size:10px;" onclick="event.stopPropagation();addCardToPlayer(${i},'yellow')">🟨</button>
             <button class="btn-sm" style="background:rgba(255,59,85,0.12);color:var(--red);border:1px solid rgba(255,59,85,0.3);padding:4px 8px;font-size:10px;" onclick="event.stopPropagation();addCardToPlayer(${i},'red')">🟥</button>
+            <button class="btn-sm" style="background:rgba(139,92,246,0.15);color:var(--purple);border:1px solid rgba(139,92,246,0.35);padding:4px 8px;font-size:10px;" onclick="event.stopPropagation();openPlayerSkillsAdminModal(${i})">🎖️مهارات</button>
           </div>`:''}
         </div>`;
       }).join('')}
@@ -9691,6 +9712,170 @@ function cardRarity(ovr){
   if(ovr>=75)  return {key:'silver',    name:'SILVER',   color:'#c0c0c0', css:'rarity-silver'};
   return         {key:'bronze', name:'BRONZE', color:'#cd7f32', css:'rarity-bronze'};
 }
+
+// ===========================
+// PLAYER SKILLS SYSTEM (مهارات اللاعب)
+// ===========================
+const PLAYER_SKILLS_CATALOG = [
+  {id:'momentum_dribbling',   name:'Momentum Dribbling'},
+  {id:'phenomenal_finishing', name:'Phenomenal Finishing'},
+  {id:'low_screamer',         name:'Low Screamer'},
+  {id:'rising_shot',          name:'Rising Shot'},
+  {id:'blitz_curler',         name:'Blitz Curler'},
+  {id:'acceleration_burst',   name:'Acceleration Burst'},
+  {id:'phenomenal_pass',      name:'Phenomenal Pass'},
+  {id:'bullet_header',        name:'Bullet Header'},
+  {id:'gk_spirit_roar',       name:'GK Spirit Roar'},
+  {id:'sniper_header',        name:'رأسية قناص'},
+  {id:'fortress',             name:'Fortress'},
+  {id:'magic',                name:'Magic'},
+  {id:'freekick_expert',      name:'Free-Kick Expert'},
+  {id:'visionary_pass',       name:'Visionary Pass'},
+  {id:'edged_crossing',       name:'Edged Crossing'},
+  {id:'surprise_shot',        name:'تسديد مفاجئ'},
+  {id:'magnetic_feet',        name:'الأقدام المغناطيسية'},
+  {id:'boost_pass',           name:'تمريرة التعزيز'},
+  {id:'post_tackle_recovery', name:'الاستخلاص بعد القدم'},
+];
+function getSkillDef(id){ return PLAYER_SKILLS_CATALOG.find(s=>s.id===id); }
+function shortSkillName(name){ return name; }
+// manager OR the account matching this player's card name can manage the equipped skills
+function canManagePlayerSkills(p){ return !!p && (isAdmin || p.name===currentUser); }
+
+// ---- slots rendered above each player card ----
+function playerSkillSlotsHTML(p, i){
+  const assigned = p.skills||[];
+  if(!assigned.length) return ''; // nothing sent by manager yet -> no row at all
+  const canEdit = canManagePlayerSkills(p);
+  const eq = (p.equippedSkills && p.equippedSkills.length===2) ? p.equippedSkills : ['',''];
+  let html='';
+  for(let slot=0; slot<2; slot++){
+    const sid = eq[slot];
+    const def = sid ? getSkillDef(sid) : null;
+    if(def){
+      html += `<div class="p-skill-slot" title="${def.name}" ${canEdit?`onclick="event.stopPropagation();openPlayerSkillPicker(${i},${slot})"`:'style="cursor:default;"'}>${shortSkillName(def.name)}</div>`;
+    } else if(canEdit){
+      html += `<div class="p-skill-slot empty" onclick="event.stopPropagation();openPlayerSkillPicker(${i},${slot})">+</div>`;
+    }
+  }
+  if(!html) return ''; // empty slots hidden from viewers who can't edit
+  return `<div class="p-skills-row">${html}</div>`;
+}
+
+// ---- MANAGER: send / remove skills for a player ----
+function openPlayerSkillsAdminModal(i){
+  try{
+    if(!isAdmin){ toast('🔒 هذي الخاصية خاصة بالمنجر بَرك'); return; }
+    const p=players[i];
+    if(!p){ toast('⚠️ ما لقيتش هذا اللاعب'); return; }
+    const body=document.getElementById('skillsAdminModalBody');
+    if(!body){ toast('⚠️ المودال ماكانش فالصفحة، رجع حمّل الصفحة من جديد'); return; }
+    body.innerHTML = playerSkillsAdminBodyHTML(i);
+    showModal('playerSkillsAdminModal');
+  }catch(e){
+    console.error('openPlayerSkillsAdminModal error:', e);
+    toast('⚠️ خطأ: '+e.message);
+  }
+}
+function playerSkillsAdminBodyHTML(i){
+  const p=players[i]; if(!p) return '';
+  const assigned = p.skills||[];
+  return `
+    <div class="section-title" style="margin-bottom:4px;">🎖️ مهارات — ${p.name}</div>
+    <div style="font-size:11.5px;color:var(--text2);margin-bottom:14px;">اضغط على المهارة باش ترسلها للاعب، وأعاود اضغط باش تحذفها منه</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;">
+      ${PLAYER_SKILLS_CATALOG.map(s=>{
+        const on = assigned.includes(s.id);
+        return `<div onclick="togglePlayerSkillAssign(${i},'${s.id}')" style="cursor:pointer;padding:8px 11px;border-radius:11px;font-size:11.5px;font-weight:700;
+          background:${on?'linear-gradient(135deg,rgba(255,214,10,0.22),rgba(205,127,50,0.14))':'rgba(255,255,255,0.05)'};
+          border:1px solid ${on?'rgba(255,214,10,0.55)':'rgba(255,255,255,0.12)'};
+          color:${on?'#ffd60a':'rgba(255,255,255,0.55)'};">${on?'✅ ':'➕ '}${s.name}</div>`;
+      }).join('')}
+    </div>
+    <button class="btn btn-ghost" style="margin-top:16px;" onclick="closeModal('playerSkillsAdminModal')">إغلاق</button>
+  `;
+}
+function togglePlayerSkillAssign(i, skillId){
+  if(!isAdmin) return;
+  const p=players[i]; if(!p) return;
+  if(!p.skills) p.skills=[];
+  const idx=p.skills.indexOf(skillId);
+  if(idx>=0){
+    p.skills.splice(idx,1);
+    // if it was equipped, clear that slot too since it's no longer assigned
+    if(p.equippedSkills){
+      p.equippedSkills = p.equippedSkills.map(s=> s===skillId ? '' : s);
+    }
+    toast('🗑️ تمت إزالة المهارة من اللاعب');
+  } else {
+    p.skills.push(skillId);
+    toast('✅ تم إرسال المهارة للاعب');
+  }
+  save();
+  const body=document.getElementById('skillsAdminModalBody');
+  if(body) body.innerHTML = playerSkillsAdminBodyHTML(i);
+  if(typeof playersPage==='function') playersPage();
+}
+
+// ---- OWNER (same account as card) or MANAGER: equip / change / hide equipped skills ----
+function openPlayerSkillPicker(i, slot){
+  try{
+    const p=players[i];
+    if(!p){ toast('⚠️ ما لقيتش هذا اللاعب'); return; }
+    if(!canManagePlayerSkills(p)){ toast('🔒 غير المنجر ولا صاحب البطاقة يقدر يبدل هذا'); return; }
+    const body=document.getElementById('skillPickerModalBody');
+    if(!body){ toast('⚠️ المودال ماكانش فالصفحة، رجع حمّل الصفحة من جديد'); return; }
+    body.innerHTML = playerSkillPickerBodyHTML(i, slot);
+    showModal('playerSkillPickerModal');
+  }catch(e){
+    console.error('openPlayerSkillPicker error:', e);
+    toast('⚠️ خطأ: '+e.message);
+  }
+}
+function playerSkillPickerBodyHTML(i, slot){
+  const p=players[i]; if(!p) return '';
+  const assigned = p.skills||[];
+  const eq = (p.equippedSkills && p.equippedSkills.length===2) ? p.equippedSkills : ['',''];
+  const otherSlot = slot===0?1:0;
+  return `
+    <div class="section-title" style="margin-bottom:4px;">🎖️ مهارة اللاعب — ${p.name}</div>
+    <div style="font-size:11.5px;color:var(--text2);margin-bottom:14px;">اختر مهارة للمكان ${slot===0?'الأول':'الثاني'} فوق البطاقة</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:48vh;overflow-y:auto;">
+      ${eq[slot] ? `<button class="btn btn-ghost" onclick="setPlayerEquippedSkill(${i},${slot},'')">🚫 إخفاء (بدون مهارة)</button>` : ''}
+      ${assigned.length===0 ? `<div style="font-size:12px;color:var(--text2);text-align:center;padding:10px;">المدرب ما رسلش أي مهارة لهذا اللاعب بعد</div>` : assigned.map(sid=>{
+        const def=getSkillDef(sid); if(!def) return '';
+        const isHere = eq[slot]===sid;
+        const isOther = eq[otherSlot]===sid;
+        return `<button class="btn ${isHere?'btn-primary':'btn-ghost'}" style="display:flex;align-items:center;justify-content:space-between;" onclick="setPlayerEquippedSkill(${i},${slot},'${sid}')">
+          <span>${def.name}</span>
+          ${isHere?'✅':isOther?'<span style="font-size:9.5px;opacity:0.6;">في المكان الآخر</span>':''}
+        </button>`;
+      }).join('')}
+    </div>
+    <button class="btn btn-ghost" style="margin-top:14px;" onclick="closeModal('playerSkillPickerModal')">إغلاق</button>
+  `;
+}
+function setPlayerEquippedSkill(i, slot, skillId){
+  const p=players[i]; if(!p) return;
+  if(!canManagePlayerSkills(p)) return;
+  if(!p.equippedSkills || p.equippedSkills.length!==2) p.equippedSkills=['',''];
+  const otherSlot = slot===0?1:0;
+  if(skillId && p.equippedSkills[otherSlot]===skillId){
+    p.equippedSkills[otherSlot]=''; // same skill can't sit in both slots -> swap it out
+  }
+  p.equippedSkills[slot]=skillId||'';
+  save();
+  closeModal('playerSkillPickerModal');
+  toast(skillId?'✅ تم تفعيل المهارة':'تم الإخفاء');
+  if(typeof playersPage==='function') playersPage();
+}
+// expose to global scope so the onclick="..." attributes in the rendered HTML can find them
+// (this script runs as a module, so top-level functions are NOT visible to inline onclick handlers unless attached to window)
+window.openPlayerSkillsAdminModal = openPlayerSkillsAdminModal;
+window.togglePlayerSkillAssign   = togglePlayerSkillAssign;
+window.openPlayerSkillPicker     = openPlayerSkillPicker;
+window.setPlayerEquippedSkill    = setPlayerEquippedSkill;
+
 const PACKS = [
   {id:'bronze', name:'باكج برونزي', icon:'🥉', price:150,  minOvr:0,  desc:'فرصة لاعبين عاديين، مع نسبة مفاجأة دائماً'},
   {id:'gold',   name:'باكج ذهبي',   icon:'🥇', price:600,  minOvr:75, desc:'لاعبون أقوى — نسبة أعلى لبطاقات GOLD'},
@@ -10565,6 +10750,22 @@ function showProfile(name){
         <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:10px;">🏅 الإنجازات (${earnedAchs.length})</div>
         <div class="profile-badges-row">
           ${earnedAchs.map(a => `<div class="profile-badge-chip" style="background:${a.color}18;border-color:${a.color}30;color:${a.color};">${a.icon} ${a.name}</div>`).join('')}
+        </div>
+      </div>`;
+    })()}
+    ${(()=>{
+      const pc = players.find(pl=>pl.name===name);
+      const skillIds = (pc && pc.skills) || [];
+      if (skillIds.length === 0) return '';
+      const eq = (pc.equippedSkills && pc.equippedSkills.length===2) ? pc.equippedSkills : ['',''];
+      return `<div class="card card-glass">
+        <div style="font-size:13px;font-weight:800;color:var(--purple);margin-bottom:10px;">🎖️ المهارات المكسوبة (${skillIds.length})</div>
+        <div class="profile-badges-row">
+          ${skillIds.map(sid=>{
+            const def=getSkillDef(sid); if(!def) return '';
+            const isEquipped = eq.includes(sid);
+            return `<div class="profile-badge-chip" style="background:${isEquipped?'rgba(255,214,10,0.14)':'rgba(139,92,246,0.10)'};border-color:${isEquipped?'rgba(255,214,10,0.35)':'rgba(139,92,246,0.25)'};color:${isEquipped?'#ffd60a':'var(--purple)'};">${isEquipped?'⭐ ':'🎖️ '}${def.name}</div>`;
+          }).join('')}
         </div>
       </div>`;
     })()}
@@ -13408,6 +13609,16 @@ function applyGift(name,giftId,g){
     <button class="btn btn-primary" onclick="savePlayerOvr()" style="margin-top:12px;">💾 حفظ OVR</button>
     <button class="btn btn-ghost" onclick="closeModal('ovrEditModal')" style="margin-top:8px;">إلغاء</button>
   </div>
+</div>
+
+<!-- PLAYER SKILLS ADMIN MODAL (MANAGER: send/remove skills) -->
+<div class="modal-overlay" id="playerSkillsAdminModal">
+  <div class="modal-box" id="skillsAdminModalBody" style="max-width:350px;"></div>
+</div>
+
+<!-- PLAYER SKILL PICKER MODAL (equip/change/hide, 2 slots) -->
+<div class="modal-overlay" id="playerSkillPickerModal">
+  <div class="modal-box" id="skillPickerModalBody" style="max-width:340px;"></div>
 </div>
 
 <!-- ===== TACTICAL 1V1 OVERLAY ===== -->
