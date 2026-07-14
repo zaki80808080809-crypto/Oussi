@@ -1101,12 +1101,35 @@ video { width: 100%; border-radius: 14px; margin-top: 10px; background: #000; }
   font-size: 24px; cursor: pointer; color: #fff;
   box-shadow: 0 8px 24px rgba(139,92,246,0.45);
   animation: aiFabPulse 2.6s ease-in-out infinite;
+  transition: transform 0.18s ease, opacity 0.2s ease;
+  touch-action: none;
 }
 .ai-fab:active { transform: scale(0.92); }
+.ai-fab.dragging { animation: none; z-index: 600; cursor: grabbing; }
+.ai-fab.over-trash { transform: scale(0.82); filter: saturate(1.4); }
 @keyframes aiFabPulse {
   0%,100% { box-shadow: 0 8px 24px rgba(139,92,246,0.45); }
   50% { box-shadow: 0 8px 30px rgba(0,184,255,0.55); }
 }
+.ai-fab-trash {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) scale(0.6);
+  width: 58px; height: 58px; border-radius: 50%; z-index: 590;
+  background: rgba(255,59,48,0.9); color: #fff; font-size: 22px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(255,59,48,0.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+.ai-fab-trash.show { opacity: 1; transform: translateX(-50%) scale(1); }
+.ai-fab-trash.over { background: rgba(255,59,48,1); transform: translateX(-50%) scale(1.25); }
+.ai-fab-restore {
+  position: fixed; left: 0; bottom: 130px; z-index: 450;
+  width: 26px; height: 40px; border: none; border-radius: 0 14px 14px 0;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: #fff; font-size: 14px; box-shadow: 2px 4px 14px rgba(139,92,246,0.4);
+  display: none; align-items: center; justify-content: center; cursor: pointer;
+}
+.ai-fab-restore.show { display: flex; }
 .ai-panel-overlay {
   position: fixed; inset: 0; z-index: 700; display: none;
   background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
@@ -3800,7 +3823,9 @@ textarea:focus, select:focus {
   <div id="app"></div>
 
   <!-- AI ASSISTANT FAB -->
-  <button class="ai-fab" onclick="openAiPanel()" title="المساعد الذكي"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M5.6 18.4l2.1-2.1"/><path d="M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></button>
+  <button class="ai-fab" id="aiFabBtn" onpointerdown="aiFabDown(event)" title="المساعد الذكي"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M5.6 18.4l2.1-2.1"/><path d="M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></button>
+  <div class="ai-fab-trash" id="aiFabTrash">✕</div>
+  <button class="ai-fab-restore" id="aiFabRestore" onclick="aiFabRestore()" title="إظهار المساعد الذكي">✨</button>
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav collapsed" id="bottomNav">
@@ -4012,14 +4037,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDj1ASg2tQuU2zAFZh_K0Bvxr6qGX4QAL4",
-  authDomain: "th-lega.firebaseapp.com",
-  databaseURL: "https://th-lega-default-rtdb.firebaseio.com",
-  projectId: "th-lega",
-  storageBucket: "th-lega.firebasestorage.app",
-  messagingSenderId: "139453911875",
-  appId: "1:139453911875:web:e0bbc61040bd25fa4155f6",
-  measurementId: "G-NBL4Y9JBRK"
+  apiKey: "AIzaSyC_-SiK9rJKcqAsQ3dEnLTuKu77nSNgONY",
+  authDomain: "lega-7th-2.firebaseapp.com",
+  databaseURL: "https://lega-7th-2-default-rtdb.firebaseio.com",
+  projectId: "lega-7th-2",
+  storageBucket: "lega-7th-2.firebasestorage.app",
+  messagingSenderId: "524309564801",
+  appId: "1:524309564801:web:4e89f1e4618b91da82ec80",
+  measurementId: "G-7GBM848DL0"
 };
 
 const fireApp = initializeApp(firebaseConfig);
@@ -4581,11 +4606,29 @@ function fbSave(key, data) {
   });
 }
 
-function fbLoad(key, callback) {
-  onValue(ref(db, key), snap => {
-    const val = snap.val();
-    callback(val ? (Array.isArray(val) ? val : Object.values(val)) : []);
-  });
+function fbLoad(key, callback, opts) {
+  opts = opts || {};
+  function fetchOnce(){
+    get(ref(db, key)).then(snap=>{
+      const val = snap.val();
+      callback(val ? (Array.isArray(val) ? val : Object.values(val)) : []);
+    }).catch(e=>console.error('fbLoad failed for '+key, e));
+  }
+  if(!opts.skipInitial) fetchOnce();
+  setInterval(fetchOnce, opts.intervalMs || 90000);
+}
+
+// Generic helper for the raw onValue() calls below: polls with get() instead of
+// keeping a permanent push connection open, so a single edit doesn't re-download
+// the whole node to every connected user instantly. Used for admin/content data
+// that doesn't need to feel instant (a ~60-90s delay is fine).
+function fbPoll(key, processFn, intervalMs, opts) {
+  opts = opts || {};
+  function fetchOnce(){
+    get(ref(db, key)).then(snap=>{ processFn(snap); }).catch(e=>console.error('fbPoll failed for '+key, e));
+  }
+  if(!opts.skipInitial) fetchOnce();
+  setInterval(fetchOnce, intervalMs || 90000);
 }
 
 function save() {
@@ -4614,15 +4657,20 @@ function save() {
 // LISTENERS
 // ===========================
 function setupListeners() {
-  fbLoad('players',  v=>{ players=v;  if(currentPage==='players') playersPage(); if(currentPage==='home') homePage(); if(currentPage==='leader') leaderPage(); });
-  fbLoad('teams',    v=>{ teams=v;    if(currentPage==='teams')   teamsPage(); });
-  fbLoad('matches',  v=>{ matches=v;  if(currentPage==='matches') matchesPage(); if(currentPage==='home') homePage(); if(currentPage==='leader') leaderPage(); });
-  fbLoad('videos',   v=>{ videos=v;   if(currentPage==='videos')  videosPage(); });
-  fbLoad('stories',  v=>{ stories=v;  if(currentPage==='stories') storiesPage(); if(currentPage==='home') homePage(); });
-  fbLoad('messages', v=>{ messages=v; if(currentPage==='chat')    chatPage(); });
-  fbLoad('live',     v=>{ live=v;     if(currentPage==='live')    livePage(); if(currentPage==='home') homePage(); });
-  fbLoad('sections', v=>{ sections=v; if(currentPage==='more')    morePage(); });
-  fbLoad('trash',    v=>{ trash=v; purgeOldTrash(); if(currentPage==='trash') trashPage(); });
+  // NOTE: these 12 keys were already loaded once by the splash screen (runRealSplashLoad),
+  // so skipInitial:true avoids fetching the exact same full node a second time on every
+  // single page load. They now refresh every 90s instead of re-downloading instantly on
+  // every write from any of the connected users — this was the main cause of the project
+  // going over its free Realtime Database download quota with only ~8 users.
+  fbLoad('players',  v=>{ players=v;  if(currentPage==='players') playersPage(); if(currentPage==='home') homePage(); if(currentPage==='leader') leaderPage(); }, {skipInitial:true});
+  fbLoad('teams',    v=>{ teams=v;    if(currentPage==='teams')   teamsPage(); }, {skipInitial:true});
+  fbLoad('matches',  v=>{ matches=v;  if(currentPage==='matches') matchesPage(); if(currentPage==='home') homePage(); if(currentPage==='leader') leaderPage(); }, {skipInitial:true});
+  fbLoad('videos',   v=>{ videos=v;   if(currentPage==='videos')  videosPage(); }, {skipInitial:true});
+  fbLoad('stories',  v=>{ stories=v;  if(currentPage==='stories') storiesPage(); if(currentPage==='home') homePage(); }, {skipInitial:true});
+  fbLoad('messages', v=>{ messages=v; if(currentPage==='chat')    chatPage(); }, {intervalMs:20000});
+  fbLoad('live',     v=>{ live=v;     if(currentPage==='live')    livePage(); if(currentPage==='home') homePage(); }, {skipInitial:true});
+  fbLoad('sections', v=>{ sections=v; if(currentPage==='more')    morePage(); }, {skipInitial:true});
+  fbLoad('trash',    v=>{ trash=v; purgeOldTrash(); if(currentPage==='trash') trashPage(); }, {skipInitial:true});
   fbLoad('streams',  v=>{ streams=v;  if(currentPage==='worldcup') worldCupPage(); });
   fbLoad('tiktoks',  v=>{ tiktoks=v;  if(currentPage==='tiktok')  tiktokPage(); });
   fbLoad('m3uChannels', v=>{ m3uChannels=v; if(currentPage==='m3u') m3uPage(); });
@@ -4631,7 +4679,7 @@ function setupListeners() {
   // cardPool: localStorage primary, Firebase sync
   (function(){
     try{ const l=localStorage.getItem('cardPool_v2'); if(l) cardPool=JSON.parse(l).filter(Boolean); } catch(e){}
-    onValue(ref(db,'cardPool'), snap=>{
+    fbPoll('cardPool', snap=>{
       const val=snap.val(); if(!val) return;
       let fb=[];
       if(Array.isArray(val)) fb=val.filter(Boolean);
@@ -4642,7 +4690,7 @@ function setupListeners() {
         if(currentPage==='myclub') myBestTeamPage();
         if(currentPage==='managerCards') managerCardsPage();
       }
-    });
+    }, 90000);
   })();
   fbLoad('users', v=>{
     users=v.map(u=>{
@@ -4655,7 +4703,7 @@ function setupListeners() {
       return u;
     });
     updateHeaderGems();
-  });
+  }, {skipInitial:true});
   onValue(ref(db,'userSongs'), snap=>{
     const val=snap.val();
     userSongs = (val&&typeof val==='object') ? val : {};
@@ -4663,7 +4711,7 @@ function setupListeners() {
   });
   fbLoad('playerRequests', v=>{ playerRequests=v; if(currentPage==='requests') requestsPage(); });
   fbLoad('codes', v=>{ codes=v; if(currentPage==='codes') codesPage(); });
-  onValue(ref(db,'voteAward'), snap=>{
+  fbPoll('voteAward', snap=>{
     const val=snap.val();
     voteAward = (val&&typeof val==='object') ? val : {title:'',nominees:[]};
     if(!Array.isArray(voteAward.nominees)) voteAward.nominees = voteAward.nominees ? Object.values(voteAward.nominees) : [];
@@ -4675,7 +4723,7 @@ function setupListeners() {
     notifications = val ? (Array.isArray(val)?val:Object.values(val)) : [];
     if(currentPage==='notifications') notificationsPage();
   });
-  onValue(ref(db,'vaultPrices'), snap=>{
+  fbPoll('vaultPrices', snap=>{
     const val=snap.val();
     if(val&&typeof val==='object'){
       vaultPrices=val;
@@ -4684,18 +4732,14 @@ function setupListeners() {
       if(currentPage==='managerPrices') managerPricesPage();
     }
   });
-  onValue(ref(db,'tacRankings'), snap=>{
+  fbPoll('tacRankings', snap=>{
     const val=snap.val();
     tacRankings = (val&&typeof val==='object') ? val : {};
     if(currentPage==='leader') leaderPage();
   });
-  fbLoad('appSettings', v=>{ if(v&&!Array.isArray(v)){ appSettings=v; appSettings.hiddenBuiltins=appSettings.hiddenBuiltins||{}; applyAppSettings(); } });
-  fbLoad('homeEmbed', v=>{ if(v&&!Array.isArray(v)){ homeEmbed=v; if(currentPage==='home') homePage(); } });
-  get(ref(db,'homeEmbed')).then(snap=>{
-    const val=snap.val();
-    if(val && typeof val==='object' && !Array.isArray(val)){ homeEmbed=val; if(currentPage==='home') homePage(); }
-  }).catch(e=>console.error('homeEmbed initial fetch failed',e));
-  onValue(ref(db,'siteThemes'), snap=>{
+  fbLoad('appSettings', v=>{ if(v&&!Array.isArray(v)){ appSettings=v; appSettings.hiddenBuiltins=appSettings.hiddenBuiltins||{}; applyAppSettings(); } }, {skipInitial:true});
+  fbLoad('homeEmbed', v=>{ if(v&&!Array.isArray(v)){ homeEmbed=v; if(currentPage==='home') homePage(); } }, {skipInitial:true});
+  fbPoll('siteThemes', snap=>{
     const val=snap.val();
     if(val&&typeof val==='object'&&val.modes){
       siteThemes=val;
@@ -4705,8 +4749,8 @@ function setupListeners() {
     applyTheme();
     if(currentPage==='themeManager') themeManagerPage();
   });
-  // Badge requests live counter
-  onValue(ref(db,'badgeRequests'), snap=>{
+  // Badge requests counter (polled instead of pushed — doesn't need to be instant)
+  fbPoll('badgeRequests', snap=>{
     const val=snap.val();
     const list = val ? (Array.isArray(val)?val:Object.values(val)) : [];
     const pendingCount = list.filter(r=>r.status==='pending').length;
@@ -4717,14 +4761,14 @@ function setupListeners() {
     }
     if(currentPage==='requests') requestsPage();
   });
-  onValue(ref(db,'bulletin'), snap=>{
+  fbPoll('bulletin', snap=>{
     const val=snap.val();
     if(val&&typeof val==='object'){
       bulletin=val;
       if(bulletin.active) showBulletin();
       else document.getElementById('bulletinOverlay').style.display='none';
     }
-  });
+  }, 90000, {skipInitial:true});
 }
 
 let currentPage = 'home';
@@ -4825,6 +4869,7 @@ function startApp() {
   applyStaticTranslations();
   updateHeaderAvatar(); setupListeners(); setupRoomListeners(); applyAppSettings(); applyTheme();
   updateHeaderGems();
+  initAiFabPosition();
   // Manager banner listener
   onValue(ref(db,'managerBanner'), snap=>{
     const val=snap.val();
@@ -8340,6 +8385,89 @@ function offlineAiAnswer(question){
   const playerCount=players.length;
   const matchCount=matches.length;
   return `🤖 مرحباً ${currentUser}! \n\nلم أفهم سؤالك بالكامل، لكن إليك ملخص سريع للدوري:\n\n👥 اللاعبون: ${playerCount}\n⚽ المباريات: ${matchCount}\n🥅 الأهداف: ${totalGoals}\n💎 جواهرك: ${me.gems||0}\n\nجرب اسأل عن:\n• "ترتيب الدوري"\n• "أفضل هداف"\n• "جواهر"\n• أو اسم لاعب مباشرة! 😊`;
+}
+
+// ---- draggable AI FAB (drag anywhere / drag to bottom X to hide) ----
+let _aiFabDrag = null;
+function aiFabDown(e){
+  const btn = document.getElementById('aiFabBtn');
+  if(!btn) return;
+  const r = btn.getBoundingClientRect();
+  _aiFabDrag = { startX:e.clientX, startY:e.clientY, offX:e.clientX-r.left, offY:e.clientY-r.top, w:r.width, h:r.height, moved:false };
+  btn.classList.add('dragging');
+  try{ btn.setPointerCapture(e.pointerId); }catch(_){}
+  document.addEventListener('pointermove', aiFabMove);
+  document.addEventListener('pointerup', aiFabUp, {once:true});
+}
+function aiFabMove(e){
+  if(!_aiFabDrag) return;
+  const btn = document.getElementById('aiFabBtn');
+  const trash = document.getElementById('aiFabTrash');
+  const dx = e.clientX-_aiFabDrag.startX, dy = e.clientY-_aiFabDrag.startY;
+  if(Math.abs(dx)>6 || Math.abs(dy)>6){
+    _aiFabDrag.moved = true;
+    trash.classList.add('show');
+  }
+  if(!_aiFabDrag.moved) return;
+  let nx = e.clientX - _aiFabDrag.offX;
+  let ny = e.clientY - _aiFabDrag.offY;
+  nx = Math.max(6, Math.min(window.innerWidth - _aiFabDrag.w - 6, nx));
+  ny = Math.max(6, Math.min(window.innerHeight - _aiFabDrag.h - 6, ny));
+  btn.style.left = nx+'px'; btn.style.top = ny+'px'; btn.style.bottom = 'auto';
+  const tr = trash.getBoundingClientRect();
+  const bcx = nx+_aiFabDrag.w/2, bcy = ny+_aiFabDrag.h/2;
+  const tcx = tr.left+tr.width/2, tcy = tr.top+tr.height/2;
+  const over = Math.hypot(bcx-tcx, bcy-tcy) < 55;
+  trash.classList.toggle('over', over);
+  btn.classList.toggle('over-trash', over);
+}
+function aiFabUp(e){
+  document.removeEventListener('pointermove', aiFabMove);
+  const btn = document.getElementById('aiFabBtn');
+  const trash = document.getElementById('aiFabTrash');
+  if(!btn || !_aiFabDrag) return;
+  const wasOverTrash = trash.classList.contains('over');
+  const moved = _aiFabDrag.moved;
+  btn.classList.remove('dragging','over-trash');
+  trash.classList.remove('show','over');
+  if(wasOverTrash){
+    btn.style.opacity='0'; btn.style.transform='scale(0.3)';
+    setTimeout(()=>{ btn.style.display='none'; }, 180);
+    localStorage.setItem('aiFabHidden','1');
+    document.getElementById('aiFabRestore').classList.add('show');
+  } else if(!moved){
+    openAiPanel();
+  } else {
+    const r = btn.getBoundingClientRect();
+    localStorage.setItem('aiFabPos', JSON.stringify({left:r.left, top:r.top}));
+  }
+  _aiFabDrag = null;
+}
+function aiFabRestore(){
+  const btn = document.getElementById('aiFabBtn');
+  if(!btn) return;
+  localStorage.removeItem('aiFabHidden');
+  btn.style.display='flex'; btn.style.opacity=''; btn.style.transform='';
+  document.getElementById('aiFabRestore').classList.remove('show');
+}
+function initAiFabPosition(){
+  const btn = document.getElementById('aiFabBtn');
+  if(!btn) return;
+  if(localStorage.getItem('aiFabHidden')==='1'){
+    btn.style.display='none';
+    document.getElementById('aiFabRestore').classList.add('show');
+    return;
+  }
+  const saved = localStorage.getItem('aiFabPos');
+  if(saved){
+    try{
+      const p = JSON.parse(saved);
+      const w = btn.offsetWidth||54, h = btn.offsetHeight||54;
+      const left = Math.max(6, Math.min(window.innerWidth-w-6, p.left));
+      const top = Math.max(6, Math.min(window.innerHeight-h-6, p.top));
+      btn.style.left = left+'px'; btn.style.top = top+'px'; btn.style.bottom = 'auto';
+    }catch(_){}
+  }
 }
 
 function openAiPanel(){
