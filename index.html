@@ -3810,6 +3810,7 @@ textarea:focus, select:focus {
   <header>
     <div class="header-title" id="headerTitle">⚡ OMEGA EMPEROR</div>
     <div style="display:flex;align-items:center;gap:9px;">
+      <div id="onlineUsersBadge" style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.06);border-radius:20px;padding:4px 9px;" title="مستخدمين متصلين الآن"><span style="width:7px;height:7px;border-radius:50%;background:#00e87a;display:inline-block;box-shadow:0 0 6px #00e87a;"></span><span id="onlineUsersCount">0</span></div>
       <div id="adminBadge" style="display:none;" class="admin-badge">👑 Manager</div>
       <div class="gem-display" onclick="openGemShop()" id="headerGems" style="display:none;">
         <span class="gem-icon">💎</span><span id="headerGemCount">0</span>
@@ -4034,7 +4035,7 @@ textarea:focus, select:focus {
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_-SiK9rJKcqAsQ3dEnLTuKu77nSNgONY",
@@ -4615,7 +4616,7 @@ function fbLoad(key, callback, opts) {
     }).catch(e=>console.error('fbLoad failed for '+key, e));
   }
   if(!opts.skipInitial) fetchOnce();
-  setInterval(fetchOnce, opts.intervalMs || 90000);
+  setInterval(fetchOnce, opts.intervalMs || 120000);
 }
 
 // Generic helper for the raw onValue() calls below: polls with get() instead of
@@ -4628,7 +4629,7 @@ function fbPoll(key, processFn, intervalMs, opts) {
     get(ref(db, key)).then(snap=>{ processFn(snap); }).catch(e=>console.error('fbPoll failed for '+key, e));
   }
   if(!opts.skipInitial) fetchOnce();
-  setInterval(fetchOnce, intervalMs || 90000);
+  setInterval(fetchOnce, intervalMs || 120000);
 }
 
 function save() {
@@ -4690,7 +4691,7 @@ function setupListeners() {
         if(currentPage==='myclub') myBestTeamPage();
         if(currentPage==='managerCards') managerCardsPage();
       }
-    }, 90000);
+    }, 120000);
   })();
   fbLoad('users', v=>{
     users=v.map(u=>{
@@ -4768,7 +4769,7 @@ function setupListeners() {
       if(bulletin.active) showBulletin();
       else document.getElementById('bulletinOverlay').style.display='none';
     }
-  }, 90000, {skipInitial:true});
+  }, 120000, {skipInitial:true});
 }
 
 let currentPage = 'home';
@@ -4870,6 +4871,7 @@ function startApp() {
   updateHeaderAvatar(); setupListeners(); setupRoomListeners(); applyAppSettings(); applyTheme();
   updateHeaderGems();
   initAiFabPosition();
+  setupPresence();
   // Manager banner listener
   onValue(ref(db,'managerBanner'), snap=>{
     const val=snap.val();
@@ -4883,9 +4885,31 @@ function startApp() {
 }
 
 // ===========================
-// USER
+// PRESENCE (online users count)
 // ===========================
-let tempAvatar='';
+function setupPresence(){
+  if(!currentUser) return;
+  const myPresenceRef = ref(db, 'presence/'+currentUser);
+  // Firebase's special ".info/connected" path tells us when this client (re)connects,
+  // which is when we need to (re)register our onDisconnect cleanup.
+  onValue(ref(db, '.info/connected'), snap=>{
+    if(snap.val()===true){
+      onDisconnect(myPresenceRef).remove();
+      set(myPresenceRef, true).catch(()=>{});
+    }
+  });
+  // presence node only ever holds small boolean flags per online user, so a live
+  // listener here is cheap — nothing like the big content collections.
+  onValue(ref(db,'presence'), snap=>{
+    const val = snap.val();
+    const count = val ? Object.keys(val).length : 0;
+    const el = document.getElementById('onlineUsersCount');
+    if(el) el.textContent = count;
+  });
+}
+window.setupPresence = setupPresence;
+
+
 function previewAvatar(input){
   const file=input.files[0]; if(!file) return;
   const r=new FileReader();
